@@ -1,0 +1,223 @@
+.problem-interface {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 64px);
+    background: var(--bg-primary);
+    overflow: hidden;
+}
+
+.problem-header {
+    height: 50px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+}
+
+.back-btn {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color var(--transition-fast);
+}
+
+.back-btn:hover {
+    color: var(--text-primary);
+}
+
+.problem-title-small {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.run-btn,
+.submit-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform var(--transition-fast);
+}
+
+.run-btn {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.submit-btn {
+    background: var(--success);
+    color: white;
+}
+
+.problem-content-split {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.left-panel-flex,
+.right-panel-flex {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-panel-flex {
+    width: 40%;
+    min-width: 300px;
+    background: var(--bg-primary);
+}
+
+.right-panel-flex {
+    flex: 1;
+    background: #1e1e1e;
+}
+
+.divider-line {
+    width: 1px;
+    background: var(--border-color);
+}
+
+.panel-tabs {
+    display: flex;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-bottom: 2px solid transparent;
+    transition: var(--transition-fast);
+}
+
+.tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent-primary);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.panel-body {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.description-view h2 {
+    font-size: 1.35rem;
+    margin-bottom: 1rem;
+}
+
+.difficulty-badge-container {
+    margin-bottom: 1rem;
+}
+
+.difficulty-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    font-weight: 600;
+}
+
+.difficulty-badge.easy {
+    color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.difficulty-badge.medium {
+    color: var(--warning);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.difficulty-badge.hard {
+    color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.description-text {
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 1.5rem 0;
+    font-size: 1rem;
+}
+
+.example-content {
+    background: var(--bg-secondary);
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.hint-item {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    border-left: 3px solid var(--accent-primary);
+}
+
+.solution-item pre {
+    background: #1a1a1a;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+}
+
+.editor-lang-selector {
+    height: 48px;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.lang-label {
+    font-weight: 500;
+}
+
+.lang-select {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.lang-select:hover,
+.lang-select:focus {
+    border-color: var(--accent-primary);
+}
+
+.monaco-wrapper {
+    flex: 1;
+}
