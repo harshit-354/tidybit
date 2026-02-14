@@ -39,15 +39,79 @@ function stripTypeAnnotations(code: string): string {
 
 /**
  * Executes user code against test cases for a given question.
- * Only supports JavaScript/TypeScript (transpiled to JS).
+ * Supports JavaScript/TypeScript and Python (via Pyodide).
  */
-export function runCode(
+export async function runCode(
     code: string,
     functionName: string,
     testCases: TestCase[],
     language: string
-): RunResult {
-    // For non-JS languages, simulate execution
+): Promise<RunResult> {
+    const startTime = performance.now();
+    const results: TestCaseResult[] = [];
+
+    // Handle Python execution
+    if (language === 'python') {
+        try {
+            // @ts-ignore - Pyodide is loaded via script tag
+            if (!window.loadPyodide) {
+                throw new Error('Pyodide is not loaded. Please check your internet connection.');
+            }
+
+            // @ts-ignore
+            if (!window.pyodide) {
+                // @ts-ignore
+                window.pyodide = await window.loadPyodide();
+            }
+
+            // @ts-ignore
+            const pyodide = window.pyodide;
+
+            for (const tc of testCases) {
+                try {
+                    const args: unknown[] = JSON.parse(tc.input);
+                    // Standard Python runner: define function, then call it with JSON-serialized args
+                    const pyCode = `
+import json
+${code}
+result = ${functionName}(*json.loads('${JSON.stringify(args)}'))
+json.dumps(result)
+                    `;
+                    const actualOutput = await pyodide.runPythonAsync(pyCode);
+
+                    const normalizedExpected = JSON.stringify(JSON.parse(tc.expectedOutput));
+                    const normalizedActual = JSON.stringify(JSON.parse(actualOutput));
+
+                    results.push({
+                        input: tc.input,
+                        expectedOutput: tc.expectedOutput,
+                        actualOutput,
+                        passed: normalizedExpected === normalizedActual,
+                    });
+                } catch (err: unknown) {
+                    results.push({
+                        input: tc.input,
+                        expectedOutput: tc.expectedOutput,
+                        actualOutput: '',
+                        passed: false,
+                        error: String(err),
+                    });
+                }
+            }
+
+            const totalTime = Math.round(performance.now() - startTime);
+            return { testCaseResults: results, allPassed: results.every(r => r.passed), totalTime };
+        } catch (err: unknown) {
+            return {
+                testCaseResults: [],
+                allPassed: false,
+                totalTime: 0,
+                error: `Python Initialization Error: ${err instanceof Error ? err.message : String(err)}`,
+            };
+        }
+    }
+
+    // For other non-JS languages
     if (language !== 'typescript' && language !== 'javascript') {
         return {
             testCaseResults: testCases.map((tc) => ({
@@ -55,36 +119,27 @@ export function runCode(
                 expectedOutput: tc.expectedOutput,
                 actualOutput: '—',
                 passed: false,
-                error: `Client-side execution is only supported for JavaScript/TypeScript. ${language.charAt(0).toUpperCase() + language.slice(1)} support requires a backend server.`,
+                error: `Client-side execution is only supported for JS/TS and Python.`,
             })),
             allPassed: false,
             totalTime: 0,
-            error: `Language "${language}" is not supported for client-side execution. Please switch to TypeScript or JavaScript.`,
+            error: `Language "${language}" is not supported for client-side execution.`,
         };
     }
 
-    const startTime = performance.now();
-    const results: TestCaseResult[] = [];
-
+    // Handle JS/TS execution
     for (const tc of testCases) {
         try {
-            // Parse the input arguments from JSON
             const args: unknown[] = JSON.parse(tc.input);
-
-            // Strip TS types so we can eval as JS
             const jsCode = stripTypeAnnotations(code);
-
-            // Build the executable body: define the function, then call it
             const body = `
                 ${jsCode}
                 return JSON.stringify(${functionName}(...${JSON.stringify(args)}));
             `;
 
-            // eslint-disable-next-line no-new-func
             const fn = new Function(body);
-            const rawResult = fn();
+            const actualOutput = fn();
 
-            const actualOutput = rawResult;
             const normalizedExpected = JSON.stringify(JSON.parse(tc.expectedOutput));
             const normalizedActual = JSON.stringify(JSON.parse(actualOutput));
 
@@ -95,19 +150,16 @@ export function runCode(
                 passed: normalizedExpected === normalizedActual,
             });
         } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : String(err);
             results.push({
                 input: tc.input,
                 expectedOutput: tc.expectedOutput,
                 actualOutput: '',
                 passed: false,
-                error: errorMessage,
+                error: err instanceof Error ? err.message : String(err),
             });
         }
     }
 
     const totalTime = Math.round(performance.now() - startTime);
-    const allPassed = results.every((r) => r.passed);
-
-    return { testCaseResults: results, allPassed, totalTime };
+    return { testCaseResults: results, allPassed: results.every((r) => r.passed), totalTime };
 }

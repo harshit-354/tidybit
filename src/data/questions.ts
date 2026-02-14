@@ -85,8 +85,8 @@ export const mockQuestions: Question[] = [
             },
             {
                 language: 'python',
-                code: 'def reverseList(head):\n    # Iterative approach\n    prev, curr = None, head\n    while curr:\n        nxt = curr.next\n        curr.next = prev\n        prev = curr\n        curr = nxt\n    return prev',
-                explanation: 'A clean iterative approach using two pointers.'
+                code: 'def reverseList(head):\n    # For this mock environment, we handle array input/output\n    if isinstance(head, list):\n        return head[::-1]\n    \n    # Standard iterative approach for a real linked list\n    prev, curr = None, head\n    while curr:\n        nxt = curr.next\n        curr.next = prev\n        prev = curr\n        curr = nxt\n    return prev',
+                explanation: 'Reverses the sequence. In this mock environment, it handles array-based linked list representations using slicing.'
             },
             {
                 language: 'java',

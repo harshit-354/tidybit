@@ -37,32 +37,37 @@ const ProblemInterface: React.FC<ProblemInterfaceProps> = ({ question, onBack })
         setSubmitted(false);
     };
 
-    const handleRun = () => {
+    const handleRun = async () => {
         setIsRunning(true);
         setRunResult(null);
         setSubmitted(false);
 
-        // Small delay to show the loading state
-        setTimeout(() => {
-            const result = runCode(code, question.solutionFunctionName, question.testCases, language);
+        try {
+            const result = await runCode(code, question.solutionFunctionName, question.testCases, language);
             setRunResult(result);
-            setIsRunning(false);
             setActiveResultTab(0);
-        }, 400);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsRunning(false);
+        }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setIsRunning(true);
         setRunResult(null);
         setSubmitted(false);
 
-        setTimeout(() => {
-            const result = runCode(code, question.solutionFunctionName, question.testCases, language);
+        try {
+            const result = await runCode(code, question.solutionFunctionName, question.testCases, language);
             setRunResult(result);
-            setIsRunning(false);
             setSubmitted(true);
             setActiveResultTab(0);
-        }, 600);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsRunning(false);
+        }
     };
 
     const passedCount = runResult?.testCaseResults.filter((r) => r.passed).length ?? 0;
