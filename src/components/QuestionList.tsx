@@ -47,7 +47,6 @@ const QuestionList: React.FC<QuestionListProps> = ({ onSelectQuestion }) => {
                             <th>Title</th>
                             <th>Category</th>
                             <th>Difficulty</th>
-                            <th>Acceptance</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,7 +61,6 @@ const QuestionList: React.FC<QuestionListProps> = ({ onSelectQuestion }) => {
                                     <td className={`difficulty-cell ${q.difficulty.toLowerCase()}`}>
                                         {q.difficulty}
                                     </td>
-                                    <td className="acceptance-cell">{q.acceptanceRate}%</td>
                                 </tr>
                             ))
                         ) : (

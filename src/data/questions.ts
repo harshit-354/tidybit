@@ -6,7 +6,6 @@ export const mockQuestions: Question[] = [
         title: 'Two Sum',
         difficulty: 'Easy',
         category: 'Arrays',
-        acceptanceRate: 49.5,
         description: 'Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`. You may assume that each input would have exactly one solution, and you may not use the same element twice.',
         constraints: [
             '2 <= nums.length <= 10^4',
@@ -37,7 +36,7 @@ export const mockQuestions: Question[] = [
             },
             {
                 language: 'python',
-                code: 'class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        prevMap = {} # val -> index\n        for i, n in enumerate(nums):\n            diff = target - n\n            if diff in prevMap:\n                return [prevMap[diff], i]\n            prevMap[n] = i',
+                code: 'def twoSum(nums, target):\n    prevMap = {} # val -> index\n    for i, n in enumerate(nums):\n        diff = target - n\n        if diff in prevMap:\n            return [prevMap[diff], i]\n        prevMap[n] = i',
                 explanation: 'Store values in a dictionary to find the complement in a single pass.'
             },
             {
@@ -63,7 +62,6 @@ export const mockQuestions: Question[] = [
         title: 'Reverse Linked List',
         difficulty: 'Easy',
         category: 'Linked List',
-        acceptanceRate: 72.1,
         description: 'Given the `head` of a singly linked list, reverse the list, and return the reversed list.',
         constraints: [
             'The number of nodes in the list is the range [0, 5000].',
@@ -82,12 +80,12 @@ export const mockQuestions: Question[] = [
         solutions: [
             {
                 language: 'typescript',
-                code: 'function reverseList(head: ListNode | null): ListNode | null {\n  let prev = null;\n  let curr = head;\n  while (curr) {\n    const next = curr.next;\n    curr.next = prev;\n    prev = curr;\n    curr = next;\n  }\n  return prev;\n}',
-                explanation: 'Iteratively reverse the list by changing next pointers.'
+                code: 'function reverseList(head: any): any {\n  // For this mock environment, we handle array input/output\n  if (Array.isArray(head)) {\n    return [...head].reverse();\n  }\n  // Standard LinkedList reversal\n  let prev = null;\n  let curr = head;\n  while (curr) {\n    const next = curr.next;\n    curr.next = prev;\n    prev = curr;\n    curr = next;\n  }\n  return prev;\n}',
+                explanation: 'Reverses the sequence. In this mock runner, it handles array-based linked list representations.'
             },
             {
                 language: 'python',
-                code: '# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        prev, curr = None, head\n        while curr:\n            nxt = curr.next\n            curr.next = prev\n            prev = curr\n            curr = nxt\n        return prev',
+                code: 'def reverseList(head):\n    # Iterative approach\n    prev, curr = None, head\n    while curr:\n        nxt = curr.next\n        curr.next = prev\n        prev = curr\n        curr = nxt\n    return prev',
                 explanation: 'A clean iterative approach using two pointers.'
             },
             {
@@ -108,7 +106,6 @@ export const mockQuestions: Question[] = [
         title: 'Longest Palindromic Substring',
         difficulty: 'Medium',
         category: 'Dynamic Programming',
-        acceptanceRate: 32.4,
         description: 'Given a string `s`, return the longest palindromic substring in `s`.',
         constraints: [
             '1 <= s.length <= 1000',
@@ -132,7 +129,7 @@ export const mockQuestions: Question[] = [
             },
             {
                 language: 'python',
-                code: 'class Solution:\n    def longestPalindrome(self, s: str) -> str:\n        res = ""\n        for i in range(len(s)):\n            # odd length\n            l, r = i, i\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                if (r - l + 1) > len(res):\n                    res = s[l:r+1]\n                l -= 1\n                r += 1\n            # even length\n            l, r = i, i + 1\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                if (r - l + 1) > len(res):\n                    res = s[l:r+1]\n                l -= 1\n                r += 1\n        return res',
+                code: 'def longestPalindrome(s):\n    res = ""\n    for i in range(len(s)):\n        # odd length\n        l, r = i, i\n        while l >= 0 and r < len(s) and s[l] == s[r]:\n            if (r - l + 1) > len(res):\n                res = s[l:r+1]\n            l -= 1\n            r += 1\n        # even length\n        l, r = i, i + 1\n        while l >= 0 and r < len(s) and s[l] == s[r]:\n            if (r - l + 1) > len(res):\n                res = s[l:r+1]\n            l -= 1\n            r += 1\n    return res',
                 explanation: 'Efficiently find the longest palindrome by checking all possible centers.'
             }
         ],
@@ -148,7 +145,6 @@ export const mockQuestions: Question[] = [
         title: 'Valid Parentheses',
         difficulty: 'Easy',
         category: 'Stack',
-        acceptanceRate: 40.3,
         description: 'Given a string `s` containing just the characters `(`, `)`, `{`, `}`, `[` and `]`, determine if the input string is valid.',
         constraints: [
             '1 <= s.length <= 10^4',
@@ -175,7 +171,7 @@ export const mockQuestions: Question[] = [
             },
             {
                 language: 'python',
-                code: 'class Solution:\n    def isValid(self, s: str) -> bool:\n        Map = {")": "(", "]": "[", "}": "{"}\n        stack = []\n        for c in s:\n            if c not in Map:\n                stack.append(c)\n                continue\n            if not stack or stack[-1] != Map[c]:\n                return False\n            stack.pop()\n        return not stack',
+                code: 'def isValid(s):\n    Map = {")": "(", "]": "[", "}": "{"}\n    stack = []\n    for c in s:\n        if c not in Map:\n            stack.append(c)\n            continue\n        if not stack or stack[-1] != Map[c]:\n            return False\n        stack.pop()\n    return not stack',
                 explanation: 'A stack ensures that the last opened bracket is the first one closed.'
             }
         ],
@@ -192,7 +188,6 @@ export const mockQuestions: Question[] = [
         title: 'Maximum Subarray',
         difficulty: 'Medium',
         category: 'Dynamic Programming',
-        acceptanceRate: 50.1,
         description: 'Given an integer array `nums`, find the subarray with the largest sum, and return its sum.',
         constraints: [
             '1 <= nums.length <= 10^5',
@@ -216,7 +211,7 @@ export const mockQuestions: Question[] = [
             },
             {
                 language: 'python',
-                code: 'class Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        max_sum = nums[0]\n        cur_sum = 0\n        for n in nums:\n            cur_sum = max(cur_sum + n, n)\n            max_sum = max(max_sum, cur_sum)\n        return max_sum',
+                code: 'def maxSubArray(nums):\n    max_sum = nums[0]\n    cur_sum = 0\n    for n in nums:\n        cur_sum = max(cur_sum + n, n)\n        max_sum = max(max_sum, cur_sum)\n    return max_sum',
                 explanation: 'Iterate through the array while maintaining the maximum sum found so far.'
             }
         ],
@@ -232,7 +227,6 @@ export const mockQuestions: Question[] = [
         title: 'Merge Intervals',
         difficulty: 'Medium',
         category: 'Sorting',
-        acceptanceRate: 46.2,
         description: 'Given an array of `intervals` where `intervals[i] = [starti, endi]`, merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.',
         constraints: [
             '1 <= intervals.length <= 10^4',
@@ -257,7 +251,7 @@ export const mockQuestions: Question[] = [
             },
             {
                 language: 'python',
-                code: 'class Solution:\n    def merge(self, intervals: List[List[int]]) -> List[List[int]]:\n        intervals.sort(key=lambda i: i[0])\n        output = [intervals[0]]\n        for start, end in intervals[1:]:\n            lastEnd = output[-1][1]\n            if start <= lastEnd:\n                output[-1][1] = max(lastEnd, end)\n            else:\n                output.append([start, end])\n        return output',
+                code: 'def merge(intervals):\n    intervals.sort(key=lambda i: i[0])\n    output = [intervals[0]]\n    for start, end in intervals[1:]:\n        lastEnd = output[-1][1]\n        if start <= lastEnd:\n            output[-1][1] = max(lastEnd, end)\n        else:\n            output.append([start, end])\n    return output',
                 explanation: 'Sort and then use a single pass to merge intervals.'
             }
         ],
@@ -272,7 +266,6 @@ export const mockQuestions: Question[] = [
         title: 'Best Time to Buy and Sell Stock',
         difficulty: 'Easy',
         category: 'Arrays',
-        acceptanceRate: 54.4,
         description: 'You are given an array `prices` where `prices[i]` is the price of a given stock on the `ith` day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.',
         constraints: [
             '1 <= prices.length <= 10^5',
@@ -296,7 +289,7 @@ export const mockQuestions: Question[] = [
             },
             {
                 language: 'python',
-                code: 'class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        l, r = 0, 1 # buy, sell\n        maxP = 0\n        while r < len(prices):\n            if prices[l] < prices[r]:\n                profit = prices[r] - prices[l]\n                maxP = max(maxP, profit)\n            else:\n                l = r\n            r += 1\n        return maxP',
+                code: 'def maxProfit(prices):\n    l, r = 0, 1 # buy, sell\n    maxP = 0\n    while r < len(prices):\n        if prices[l] < prices[r]:\n            profit = prices[r] - prices[l]\n            maxP = max(maxP, profit)\n        else:\n            l = r\n        r += 1\n    return maxP',
                 explanation: 'Use two pointers to find the maximum price difference.'
             }
         ],

@@ -122,7 +122,3 @@
 .difficulty-cell.hard {
     color: var(--error);
 }
-
-.acceptance-cell {
-    color: var(--text-secondary);
-}

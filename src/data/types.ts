@@ -41,7 +41,6 @@ export interface Question {
     }[];
     hints: Hint[];
     solutions: Solution[];
-    acceptanceRate: number;
     testCases: TestCase[];
     solutionFunctionName: string;
 }
