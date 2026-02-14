@@ -1,7 +1,7 @@
 .problem-interface {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 64px);
+    height: 100vh;
     background: var(--bg-primary);
     overflow: hidden;
 }
@@ -84,6 +84,12 @@
 .right-panel-flex {
     flex: 1;
     background: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    /* Important for flex child to shrink below content */
+    overflow: hidden;
 }
 
 .divider-line {
@@ -220,6 +226,8 @@
 
 .monaco-wrapper {
     flex: 1;
+    min-height: 0;
+    position: relative;
 }
 
 /* --- Results Panel --- */
@@ -236,11 +244,12 @@
 
 .results-panel.visible {
     max-height: 50vh;
-    min-height: 200px;
+    min-height: 250px;
     padding: 1rem;
     overflow-y: auto;
     border-top: 2px solid var(--border-color);
     box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
 }
 
 .results-loading {
