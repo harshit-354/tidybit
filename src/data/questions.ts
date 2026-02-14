@@ -28,7 +28,27 @@ export const mockQuestions: Question[] = [
             {
                 language: 'typescript',
                 code: 'function twoSum(nums: number[], target: number): number[] {\n  const map = new Map<number, number>();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement)!, i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}',
-                explanation: 'We use a hash map to store the values we have seen so far and their indices. For each number, we check if its complement exists in the map.'
+                explanation: 'Use a hash map to store seen values and their indices for O(n) lookup.'
+            },
+            {
+                language: 'javascript',
+                code: 'var twoSum = function(nums, target) {\n    const map = {};\n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        if (complement in map) {\n            return [map[complement], i];\n        }\n        map[nums[i]] = i;\n    }\n};',
+                explanation: 'A simple object-based hash map approach for O(n) performance.'
+            },
+            {
+                language: 'python',
+                code: 'class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        prevMap = {} # val -> index\n        for i, n in enumerate(nums):\n            diff = target - n\n            if diff in prevMap:\n                return [prevMap[diff], i]\n            prevMap[n] = i',
+                explanation: 'Store values in a dictionary to find the complement in a single pass.'
+            },
+            {
+                language: 'cpp',
+                code: 'class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        unordered_map<int, int> prevMap;\n        for (int i = 0; i < nums.size(); i++) {\n            int diff = target - nums[i];\n            if (prevMap.find(diff) != prevMap.end()) {\n                return {prevMap[diff], i};\n            }\n            prevMap[nums[i]] = i;\n        }\n        return {};\n    }\n};',
+                explanation: 'Using unordered_map for O(1) average time complexity on lookups.'
+            },
+            {
+                language: 'java',
+                code: 'class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        HashMap<Integer, Integer> prevMap = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            int diff = target - nums[i];\n            if (prevMap.containsKey(diff)) {\n                return new int[] { prevMap.get(diff), i };\n            }\n            prevMap.put(nums[i], i);\n        }\n        return new int[] {};\n    }\n}',
+                explanation: 'Java implementation using HashMap for efficient complement lookup.'
             }
         ],
         solutionFunctionName: 'twoSum',
@@ -63,7 +83,17 @@ export const mockQuestions: Question[] = [
             {
                 language: 'typescript',
                 code: 'function reverseList(head: ListNode | null): ListNode | null {\n  let prev = null;\n  let curr = head;\n  while (curr) {\n    const next = curr.next;\n    curr.next = prev;\n    prev = curr;\n    curr = next;\n  }\n  return prev;\n}',
-                explanation: 'Iterate through the list, flipping the `next` pointer of each node to point to the previous node.'
+                explanation: 'Iteratively reverse the list by changing next pointers.'
+            },
+            {
+                language: 'python',
+                code: '# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        prev, curr = None, head\n        while curr:\n            nxt = curr.next\n            curr.next = prev\n            prev = curr\n            curr = nxt\n        return prev',
+                explanation: 'A clean iterative approach using two pointers.'
+            },
+            {
+                language: 'java',
+                code: 'class Solution {\n    public ListNode reverseList(ListNode head) {\n        ListNode prev = null;\n        ListNode curr = head;\n        while (curr != null) {\n            ListNode next = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = next;\n        }\n        return prev;\n    }\n}',
+                explanation: 'Classic iterative reversal in Java.'
             }
         ],
         solutionFunctionName: 'reverseList',
@@ -94,7 +124,18 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Try expanding around each character as a potential center.' }
         ],
-        solutions: [],
+        solutions: [
+            {
+                language: 'typescript',
+                code: 'function longestPalindrome(s: string): string {\n  if (s.length < 2) return s;\n  let start = 0, maxLength = 1;\n  function expand(l: number, r: number) {\n    while (l >= 0 && r < s.length && s[l] === s[r]) {\n      if (r - l + 1 > maxLength) {\n        start = l;\n        maxLength = r - l + 1;\n      }\n      l--; r++;\n    }\n  }\n  for (let i = 0; i < s.length; i++) {\n    expand(i, i);\n    expand(i, i + 1);\n  }\n  return s.substring(start, start + maxLength);\n}',
+                explanation: 'Expand around each character (and between characters) to find the longest palindrome.'
+            },
+            {
+                language: 'python',
+                code: 'class Solution:\n    def longestPalindrome(self, s: str) -> str:\n        res = ""\n        for i in range(len(s)):\n            # odd length\n            l, r = i, i\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                if (r - l + 1) > len(res):\n                    res = s[l:r+1]\n                l -= 1\n                r += 1\n            # even length\n            l, r = i, i + 1\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                if (r - l + 1) > len(res):\n                    res = s[l:r+1]\n                l -= 1\n                r += 1\n        return res',
+                explanation: 'Efficiently find the longest palindrome by checking all possible centers.'
+            }
+        ],
         solutionFunctionName: 'longestPalindrome',
         testCases: [
             { input: '["babad"]', expectedOutput: '"bab"' },
@@ -126,7 +167,18 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Use a stack to keep track of open parentheses.' }
         ],
-        solutions: [],
+        solutions: [
+            {
+                language: 'typescript',
+                code: 'function isValid(s: string): boolean {\n  const stack: string[] = [];\n  const map: Record<string, string> = { ")": "(", "}": "{", "]": "[" };\n  for (const char of s) {\n    if (map[char]) {\n      if (stack.pop() !== map[char]) return false;\n    } else {\n      stack.push(char);\n    }\n  }\n  return stack.length === 0;\n}',
+                explanation: 'Use a stack to match brackets. Opening brackets are pushed, closing ones must match the top.'
+            },
+            {
+                language: 'python',
+                code: 'class Solution:\n    def isValid(self, s: str) -> bool:\n        Map = {")": "(", "]": "[", "}": "{"}\n        stack = []\n        for c in s:\n            if c not in Map:\n                stack.append(c)\n                continue\n            if not stack or stack[-1] != Map[c]:\n                return False\n            stack.pop()\n        return not stack',
+                explanation: 'A stack ensures that the last opened bracket is the first one closed.'
+            }
+        ],
         solutionFunctionName: 'isValid',
         testCases: [
             { input: '["()"]', expectedOutput: 'true' },
@@ -156,7 +208,18 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Kadane\'s Algorithm is the most efficient approach here.' }
         ],
-        solutions: [],
+        solutions: [
+            {
+                language: 'typescript',
+                code: 'function maxSubArray(nums: number[]): number {\n  let maxSum = nums[0];\n  let currentSum = 0;\n  for (const n of nums) {\n    currentSum = Math.max(currentSum + n, n);\n    maxSum = Math.max(maxSum, currentSum);\n  }\n  return maxSum;\n}',
+                explanation: 'Kadane\'s algorithm: for each position, the max subarray ending there is either the current element or the element plus the previous max.'
+            },
+            {
+                language: 'python',
+                code: 'class Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        max_sum = nums[0]\n        cur_sum = 0\n        for n in nums:\n            cur_sum = max(cur_sum + n, n)\n            max_sum = max(max_sum, cur_sum)\n        return max_sum',
+                explanation: 'Iterate through the array while maintaining the maximum sum found so far.'
+            }
+        ],
         solutionFunctionName: 'maxSubArray',
         testCases: [
             { input: '[[-2,1,-3,4,-1,2,1,-5,4]]', expectedOutput: '6' },
@@ -186,7 +249,18 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Sort the intervals by their start time first.' }
         ],
-        solutions: [],
+        solutions: [
+            {
+                language: 'typescript',
+                code: 'function merge(intervals: number[][]): number[][] {\n  if (intervals.length === 0) return [];\n  intervals.sort((a, b) => a[0] - b[0]);\n  const result = [intervals[0]];\n  for (let i = 1; i < intervals.length; i++) {\n    const last = result[result.length - 1];\n    const curr = intervals[i];\n    if (curr[0] <= last[1]) {\n      last[1] = Math.max(last[1], curr[1]);\n    } else {\n      result.push(curr);\n    }\n  }\n  return result;\n}',
+                explanation: 'Sort by start time, then iterate and merge overlapping intervals.'
+            },
+            {
+                language: 'python',
+                code: 'class Solution:\n    def merge(self, intervals: List[List[int]]) -> List[List[int]]:\n        intervals.sort(key=lambda i: i[0])\n        output = [intervals[0]]\n        for start, end in intervals[1:]:\n            lastEnd = output[-1][1]\n            if start <= lastEnd:\n                output[-1][1] = max(lastEnd, end)\n            else:\n                output.append([start, end])\n        return output',
+                explanation: 'Sort and then use a single pass to merge intervals.'
+            }
+        ],
         solutionFunctionName: 'merge',
         testCases: [
             { input: '[[[1,3],[2,6],[8,10],[15,18]]]', expectedOutput: '[[1,6],[8,10],[15,18]]' },
@@ -214,7 +288,18 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Keep track of the minimum price encountered so far.' }
         ],
-        solutions: [],
+        solutions: [
+            {
+                language: 'typescript',
+                code: 'function maxProfit(prices: number[]): number {\n  let minPrice = Infinity;\n  let maxProfit = 0;\n  for (const p of prices) {\n    minPrice = Math.min(minPrice, p);\n    maxProfit = Math.max(maxProfit, p - minPrice);\n  }\n  return maxProfit;\n}',
+                explanation: 'Maintain the minimum price seen and calculate the profit for each subsequent price.'
+            },
+            {
+                language: 'python',
+                code: 'class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        l, r = 0, 1 # buy, sell\n        maxP = 0\n        while r < len(prices):\n            if prices[l] < prices[r]:\n                profit = prices[r] - prices[l]\n                maxP = max(maxP, profit)\n            else:\n                l = r\n            r += 1\n        return maxP',
+                explanation: 'Use two pointers to find the maximum price difference.'
+            }
+        ],
         solutionFunctionName: 'maxProfit',
         testCases: [
             { input: '[[7,1,5,3,6,4]]', expectedOutput: '5' },
