@@ -71,7 +71,10 @@ function App() {
       <main className="main-content">
         {view === 'landing' && (
           <div className="landing-wrapper">
-            <LandingPage />
+            <LandingPage
+              onStartSolving={handleStart}
+              onExploreQuestions={handleStart}
+            />
             <div className="landing-start-cta">
               <button className="cta-primary big" onClick={handleStart}>
                 {user ? 'Continue Solving' : 'Start Solving Now'}

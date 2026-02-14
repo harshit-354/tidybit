@@ -27,13 +27,13 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, onLogin, onLogout, currentV
                     >
                         Questions
                     </button>
-                    <button className="nav-link">Contest</button>
-                    <button className="nav-link">Learn</button>
-                    <button className="nav-link">Discuss</button>
+                    <button className="nav-link" onClick={() => alert('Contest module coming soon!')}>Contest</button>
+                    <button className="nav-link" onClick={() => alert('Learning paths coming soon!')}>Learn</button>
+                    <button className="nav-link" onClick={() => alert('Discussion forum coming soon!')}>Discuss</button>
                 </div>
 
                 <div className="navbar-actions">
-                    <button className="icon-btn"><Bell size={20} /></button>
+                    <button className="icon-btn" onClick={() => alert('No new notifications')}><Bell size={20} /></button>
                     {user ? (
                         <>
                             <div className="profile-badge" title={user.name}>

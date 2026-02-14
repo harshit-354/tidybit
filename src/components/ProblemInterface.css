@@ -221,3 +221,190 @@
 .monaco-wrapper {
     flex: 1;
 }
+
+/* --- Results Panel --- */
+.results-panel {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+    padding: 0 1rem;
+}
+
+.results-panel.visible {
+    max-height: 300px;
+    padding: 0.75rem 1rem;
+    overflow-y: auto;
+}
+
+.results-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 0.75rem 0;
+}
+
+.results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+}
+
+.results-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.results-status.passed {
+    color: var(--success);
+}
+
+.results-status.failed {
+    color: var(--error);
+}
+
+.results-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.results-time {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* --- Test case tabs --- */
+.testcase-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.testcase-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.testcase-tab.active {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.testcase-tab.pass {
+    color: var(--success);
+}
+
+.testcase-tab.fail {
+    color: var(--error);
+}
+
+.testcase-tab.active.pass {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.testcase-tab.active.fail {
+    border-color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* --- Test case detail --- */
+.testcase-detail {
+    background: var(--bg-primary);
+    border-radius: 8px;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+}
+
+.testcase-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.45rem;
+    font-size: 0.85rem;
+}
+
+.testcase-row:last-child {
+    margin-bottom: 0;
+}
+
+.testcase-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    min-width: 72px;
+    flex-shrink: 0;
+}
+
+.testcase-value {
+    font-family: monospace;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    word-break: break-all;
+}
+
+.testcase-value.correct {
+    color: var(--success);
+}
+
+.testcase-value.wrong {
+    color: var(--error);
+}
+
+.testcase-error {
+    color: var(--error);
+    font-size: 0.85rem;
+}
+
+.testcase-error pre {
+    background: rgba(239, 68, 68, 0.08);
+    padding: 0.6rem;
+    border-radius: 6px;
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* --- Spinner animation --- */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation: spin 0.8s linear infinite;
+}
+
+/* --- Disabled buttons --- */
+.run-btn:disabled,
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

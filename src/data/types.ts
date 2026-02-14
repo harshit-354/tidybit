@@ -22,6 +22,11 @@ export interface TreeNode {
     right: TreeNode | null;
 }
 
+export interface TestCase {
+    input: string;
+    expectedOutput: string;
+}
+
 export interface Question {
     id: string;
     title: string;
@@ -37,6 +42,8 @@ export interface Question {
     hints: Hint[];
     solutions: Solution[];
     acceptanceRate: number;
+    testCases: TestCase[];
+    solutionFunctionName: string;
 }
 
 export interface User {

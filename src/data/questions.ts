@@ -30,6 +30,12 @@ export const mockQuestions: Question[] = [
                 code: 'function twoSum(nums: number[], target: number): number[] {\n  const map = new Map<number, number>();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement)!, i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}',
                 explanation: 'We use a hash map to store the values we have seen so far and their indices. For each number, we check if its complement exists in the map.'
             }
+        ],
+        solutionFunctionName: 'twoSum',
+        testCases: [
+            { input: '[[2,7,11,15], 9]', expectedOutput: '[0,1]' },
+            { input: '[[3,2,4], 6]', expectedOutput: '[1,2]' },
+            { input: '[[3,3], 6]', expectedOutput: '[0,1]' }
         ]
     },
     {
@@ -59,6 +65,12 @@ export const mockQuestions: Question[] = [
                 code: 'function reverseList(head: ListNode | null): ListNode | null {\n  let prev = null;\n  let curr = head;\n  while (curr) {\n    const next = curr.next;\n    curr.next = prev;\n    prev = curr;\n    curr = next;\n  }\n  return prev;\n}',
                 explanation: 'Iterate through the list, flipping the `next` pointer of each node to point to the previous node.'
             }
+        ],
+        solutionFunctionName: 'reverseList',
+        testCases: [
+            { input: '[[1,2,3,4,5]]', expectedOutput: '[5,4,3,2,1]' },
+            { input: '[[1,2]]', expectedOutput: '[2,1]' },
+            { input: '[[]]', expectedOutput: '[]' }
         ]
     },
     {
@@ -82,7 +94,13 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Try expanding around each character as a potential center.' }
         ],
-        solutions: []
+        solutions: [],
+        solutionFunctionName: 'longestPalindrome',
+        testCases: [
+            { input: '["babad"]', expectedOutput: '"bab"' },
+            { input: '["cbbd"]', expectedOutput: '"bb"' },
+            { input: '["a"]', expectedOutput: '"a"' }
+        ]
     },
     {
         id: '4',
@@ -108,7 +126,14 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Use a stack to keep track of open parentheses.' }
         ],
-        solutions: []
+        solutions: [],
+        solutionFunctionName: 'isValid',
+        testCases: [
+            { input: '["()"]', expectedOutput: 'true' },
+            { input: '["()[]{}"]', expectedOutput: 'true' },
+            { input: '["(]"]', expectedOutput: 'false' },
+            { input: '["([)]"]', expectedOutput: 'false' }
+        ]
     },
     {
         id: '5',
@@ -131,7 +156,13 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Kadane\'s Algorithm is the most efficient approach here.' }
         ],
-        solutions: []
+        solutions: [],
+        solutionFunctionName: 'maxSubArray',
+        testCases: [
+            { input: '[[-2,1,-3,4,-1,2,1,-5,4]]', expectedOutput: '6' },
+            { input: '[[1]]', expectedOutput: '1' },
+            { input: '[[5,4,-1,7,8]]', expectedOutput: '23' }
+        ]
     },
     {
         id: '6',
@@ -155,7 +186,12 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Sort the intervals by their start time first.' }
         ],
-        solutions: []
+        solutions: [],
+        solutionFunctionName: 'merge',
+        testCases: [
+            { input: '[[[1,3],[2,6],[8,10],[15,18]]]', expectedOutput: '[[1,6],[8,10],[15,18]]' },
+            { input: '[[[1,4],[4,5]]]', expectedOutput: '[[1,5]]' }
+        ]
     },
     {
         id: '7',
@@ -178,6 +214,11 @@ export const mockQuestions: Question[] = [
         hints: [
             { id: 1, content: 'Keep track of the minimum price encountered so far.' }
         ],
-        solutions: []
+        solutions: [],
+        solutionFunctionName: 'maxProfit',
+        testCases: [
+            { input: '[[7,1,5,3,6,4]]', expectedOutput: '5' },
+            { input: '[[7,6,4,3,1]]', expectedOutput: '0' }
+        ]
     }
 ];

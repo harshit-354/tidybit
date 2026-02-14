@@ -3,7 +3,12 @@ import { ChevronRight, Code, Brain, Trophy } from 'lucide-react';
 import { motion } from 'framer-motion';
 import './LandingPage.css';
 
-const LandingPage: React.FC = () => {
+interface LandingPageProps {
+    onStartSolving: () => void;
+    onExploreQuestions: () => void;
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ onStartSolving, onExploreQuestions }) => {
     return (
         <div className="landing-page">
             <section className="hero-section">
@@ -23,10 +28,10 @@ const LandingPage: React.FC = () => {
                         Solve, learn, and grow with a premium coding experience.
                     </p>
                     <div className="hero-cta">
-                        <button className="cta-primary">
+                        <button className="cta-primary" onClick={onStartSolving}>
                             Get Started <ChevronRight size={18} />
                         </button>
-                        <button className="cta-secondary">Explore Questions</button>
+                        <button className="cta-secondary" onClick={onExploreQuestions}>Explore Questions</button>
                     </div>
                 </motion.div>
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Editor from '@monaco-editor/react';
-import { ChevronLeft, Play, Send, Lightbulb, FileText, CheckCircle } from 'lucide-react';
+import { ChevronLeft, Play, Send, Lightbulb, FileText, CheckCircle, Loader2, XCircle, Clock } from 'lucide-react';
 import type { Question } from '../data/types';
+import { runCode, type RunResult } from '../utils/codeRunner';
 import './ProblemInterface.css';
 
 interface ProblemInterfaceProps {
@@ -9,25 +10,63 @@ interface ProblemInterfaceProps {
     onBack: () => void;
 }
 
-const STARTER_CODE = {
-    typescript: '// Write your TypeScript solution here\n',
-    python: '# Write your Python solution here\ndef solution():\n    pass',
-    cpp: '// Write your C++ solution here\n#include <iostream>\n\nvoid solution() {\n    \n}',
-    java: '// Write your Java solution here\nclass Solution {\n    public void solve() {\n        \n    }\n}'
+const STARTER_CODE: Record<string, (fnName: string) => string> = {
+    typescript: (fnName) => `// Write your TypeScript solution here\nfunction ${fnName}() {\n  \n}`,
+    javascript: (fnName) => `// Write your JavaScript solution here\nfunction ${fnName}() {\n  \n}`,
+    python: (fnName) => `# Write your Python solution here\ndef ${fnName}():\n    pass`,
+    cpp: (fnName) => `// Write your C++ solution here\n#include <iostream>\n\nvoid ${fnName}() {\n    \n}`,
+    java: (fnName) => `// Write your Java solution here\nclass Solution {\n    public void ${fnName}() {\n        \n    }\n}`,
 };
 
 const ProblemInterface: React.FC<ProblemInterfaceProps> = ({ question, onBack }) => {
     const [activeTab, setActiveTab] = useState<'description' | 'hints' | 'solutions'>('description');
-    const [language, setLanguage] = useState<'typescript' | 'python' | 'cpp' | 'java'>('typescript');
-    const [code, setCode] = useState(question.solutions[0]?.code || STARTER_CODE.typescript);
+    const [language, setLanguage] = useState<'typescript' | 'javascript' | 'python' | 'cpp' | 'java'>('typescript');
+    const [code, setCode] = useState(
+        question.solutions[0]?.code || STARTER_CODE.typescript(question.solutionFunctionName)
+    );
+    const [isRunning, setIsRunning] = useState(false);
+    const [runResult, setRunResult] = useState<RunResult | null>(null);
+    const [activeResultTab, setActiveResultTab] = useState<number>(0);
+    const [submitted, setSubmitted] = useState(false);
 
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newLang = e.target.value as keyof typeof STARTER_CODE;
-        setLanguage(newLang);
-        // Ideally we would preserve code for each language, but for now we reset to starter
-        // or existing solution if available for that lang (mock data only has TS)
-        setCode(STARTER_CODE[newLang]);
+        setLanguage(newLang as typeof language);
+        setCode(STARTER_CODE[newLang](question.solutionFunctionName));
+        setRunResult(null);
+        setSubmitted(false);
     };
+
+    const handleRun = () => {
+        setIsRunning(true);
+        setRunResult(null);
+        setSubmitted(false);
+
+        // Small delay to show the loading state
+        setTimeout(() => {
+            const result = runCode(code, question.solutionFunctionName, question.testCases, language);
+            setRunResult(result);
+            setIsRunning(false);
+            setActiveResultTab(0);
+        }, 400);
+    };
+
+    const handleSubmit = () => {
+        setIsRunning(true);
+        setRunResult(null);
+        setSubmitted(false);
+
+        setTimeout(() => {
+            const result = runCode(code, question.solutionFunctionName, question.testCases, language);
+            setRunResult(result);
+            setIsRunning(false);
+            setSubmitted(true);
+            setActiveResultTab(0);
+        }, 600);
+    };
+
+    const passedCount = runResult?.testCaseResults.filter((r) => r.passed).length ?? 0;
+    const totalCount = runResult?.testCaseResults.length ?? 0;
 
     return (
         <div className="problem-interface">
@@ -39,8 +78,14 @@ const ProblemInterface: React.FC<ProblemInterfaceProps> = ({ question, onBack })
                     {question.id}. {question.title}
                 </div>
                 <div className="editor-actions">
-                    <button className="run-btn"><Play size={16} /> Run</button>
-                    <button className="submit-btn"><Send size={16} /> Submit</button>
+                    <button className="run-btn" onClick={handleRun} disabled={isRunning}>
+                        {isRunning ? <Loader2 size={16} className="spin" /> : <Play size={16} />}
+                        Run
+                    </button>
+                    <button className="submit-btn" onClick={handleSubmit} disabled={isRunning}>
+                        {isRunning ? <Loader2 size={16} className="spin" /> : <Send size={16} />}
+                        Submit
+                    </button>
                 </div>
             </div>
 
@@ -140,6 +185,7 @@ const ProblemInterface: React.FC<ProblemInterfaceProps> = ({ question, onBack })
                             className="lang-select"
                         >
                             <option value="typescript">TypeScript</option>
+                            <option value="javascript">JavaScript</option>
                             <option value="python">Python</option>
                             <option value="cpp">C++</option>
                             <option value="java">Java</option>
@@ -148,7 +194,7 @@ const ProblemInterface: React.FC<ProblemInterfaceProps> = ({ question, onBack })
                     <div className="monaco-wrapper">
                         <Editor
                             height="100%"
-                            language={language}
+                            language={language === 'cpp' ? 'cpp' : language}
                             theme="vs-dark"
                             value={code}
                             onChange={(val) => setCode(val || '')}
@@ -160,6 +206,85 @@ const ProblemInterface: React.FC<ProblemInterfaceProps> = ({ question, onBack })
                                 padding: { top: 16 }
                             }}
                         />
+                    </div>
+
+                    {/* Results Panel */}
+                    <div className={`results-panel ${runResult ? 'visible' : ''}`}>
+                        {isRunning && (
+                            <div className="results-loading">
+                                <Loader2 size={20} className="spin" />
+                                <span>Running test cases...</span>
+                            </div>
+                        )}
+
+                        {runResult && !isRunning && (
+                            <>
+                                <div className="results-header">
+                                    <div className={`results-status ${runResult.allPassed ? 'passed' : 'failed'}`}>
+                                        {runResult.allPassed ? (
+                                            <>
+                                                <CheckCircle size={18} />
+                                                {submitted ? 'Accepted' : 'All Tests Passed'}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <XCircle size={18} />
+                                                {runResult.error ? 'Error' : 'Wrong Answer'}
+                                            </>
+                                        )}
+                                    </div>
+                                    <div className="results-meta">
+                                        <span className="results-count">{passedCount}/{totalCount} passed</span>
+                                        <span className="results-time">
+                                            <Clock size={14} /> {runResult.totalTime}ms
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Test case tabs */}
+                                <div className="testcase-tabs">
+                                    {runResult.testCaseResults.map((tc, idx) => (
+                                        <button
+                                            key={idx}
+                                            className={`testcase-tab ${activeResultTab === idx ? 'active' : ''} ${tc.passed ? 'pass' : 'fail'}`}
+                                            onClick={() => setActiveResultTab(idx)}
+                                        >
+                                            {tc.passed ? <CheckCircle size={12} /> : <XCircle size={12} />}
+                                            Case {idx + 1}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Active test case detail */}
+                                {runResult.testCaseResults[activeResultTab] && (
+                                    <div className="testcase-detail">
+                                        {runResult.testCaseResults[activeResultTab].error ? (
+                                            <div className="testcase-error">
+                                                <strong>Runtime Error:</strong>
+                                                <pre>{runResult.testCaseResults[activeResultTab].error}</pre>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="testcase-row">
+                                                    <span className="testcase-label">Input:</span>
+                                                    <code className="testcase-value">{runResult.testCaseResults[activeResultTab].input}</code>
+                                                </div>
+                                                <div className="testcase-row">
+                                                    <span className="testcase-label">Expected:</span>
+                                                    <code className="testcase-value">{runResult.testCaseResults[activeResultTab].expectedOutput}</code>
+                                                </div>
+                                                <div className="testcase-row">
+                                                    <span className="testcase-label">Output:</span>
+                                                    <code className={`testcase-value ${runResult.testCaseResults[activeResultTab].passed ? 'correct' : 'wrong'}`}>
+                                                        {runResult.testCaseResults[activeResultTab].actualOutput || '(empty)'}
+                                                    </code>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
