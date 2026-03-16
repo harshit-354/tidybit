@@ -186,13 +186,19 @@ function App() {
         <div style={{
           background: '#ef4444',
           color: '#fff',
-          padding: '8px 16px',
+          padding: '12px 16px',
           textAlign: 'center',
-          fontSize: '0.875rem',
-          fontWeight: 'bold',
-          zIndex: 9999
+          fontSize: '0.9rem',
+          fontWeight: '500',
+          zIndex: 9999,
+          boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)'
         }}>
-          ⚠️ Backend Offline (v{STORAGE_VERSION}). Run "npm run dev".
+          {window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? (
+            <>⚠️ <b>Backend Offline.</b> Run <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px' }}>npm run dev</code> in your terminal to enable contests.</>
+          ) : (
+            <>📡 <b>Cloud Database Not Configured.</b> To make contests work on the website, you must add <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px' }}>VITE_SUPABASE_URL</code> to your Vercel Environment Variables.</>
+          )}
         </div>
       )}
       {!isServerDown && (
