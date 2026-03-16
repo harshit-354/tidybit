@@ -12,7 +12,7 @@ import ContestLeaderboardPage from './pages/ContestLeaderboardPage';
 import ContestCreatePage from './pages/ContestCreatePage';
 import ContestLobbyPage from './pages/ContestLobbyPage';
 import ContestEnterCodePage from './pages/ContestEnterCodePage';
-import { getSession, saveSession, createSession, checkServerHealth } from './utils/sessionStorage';
+import { getSession, saveSession, createSession, checkServerHealth, STORAGE_VERSION } from './utils/sessionStorage';
 import type { TestSession, Participant } from './types/contest';
 import './App.css';
 
@@ -187,7 +187,19 @@ function App() {
           fontWeight: 'bold',
           zIndex: 9999
         }}>
-          ⚠️ Backend Server Offline. Contests will not work until you run "npm run dev".
+          ⚠️ Backend Offline (v{STORAGE_VERSION}). Run "npm run dev".
+        </div>
+      )}
+      {!isServerDown && (
+        <div style={{
+          position: 'fixed',
+          bottom: '10px',
+          right: '10px',
+          fontSize: '10px',
+          color: 'rgba(255,255,255,0.2)',
+          zIndex: 9999
+        }}>
+          TidyBit Contest v{STORAGE_VERSION}
         </div>
       )}
       {view !== 'problem' && view !== 'login' && !view.startsWith('contest_') && (

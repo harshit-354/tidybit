@@ -2,10 +2,11 @@ import type { TestSession } from '../types/contest';
 import { javascriptQuestions } from '../data/javascriptQuestions';
 
 const API_BASE = '/api/sessions';
+export const STORAGE_VERSION = '1.0.1'; // Increment this to track updates
 
 export async function checkServerHealth(): Promise<boolean> {
   try {
-    const res = await fetch('/api/health');
+    const res = await fetch(`/api/health?t=${Date.now()}`);
     return res.ok;
   } catch (err) {
     console.error('Server health check failed:', err);
@@ -49,7 +50,7 @@ export async function saveSession(session: TestSession): Promise<void> {
 export async function getSession(id: string): Promise<TestSession | null> {
   const normalizedId = id.toLowerCase();
   try {
-    const res = await fetch(`${API_BASE}/${normalizedId}`);
+    const res = await fetch(`${API_BASE}/${normalizedId}?t=${Date.now()}`);
     if (res.status === 404) return null;
     if (!res.ok) {
       throw new Error(`Server returned ${res.status}`);

@@ -10,6 +10,12 @@ const SESSIONS_FILE = path.join(__dirname, 'sessions.json');
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
 
+// Request Logger Middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`);
+  next();
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -23,19 +29,23 @@ app.get('/api/health', (req, res) => {
 let sessions = {};
 try {
   if (fs.existsSync(SESSIONS_FILE)) {
-    sessions = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8'));
-    console.log(`📦 Loaded ${Object.keys(sessions).length} existing sessions from disk.`);
+    const data = fs.readFileSync(SESSIONS_FILE, 'utf8');
+    if (data.trim()) {
+      sessions = JSON.parse(data);
+      console.log(`📦 LOADED: ${Object.keys(sessions).length} sessions from ${SESSIONS_FILE}`);
+    }
   }
 } catch (err) {
-  console.error('Failed to load sessions:', err);
+  console.error('❌ Failed to load sessions from disk:', err);
+  sessions = {};
 }
 
 const saveToDisk = () => {
   try {
     fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions, null, 2));
-    console.log(`💾 Sessions persistent to: ${SESSIONS_FILE}`);
+    console.log(`💾 SAVED: ${Object.keys(sessions).length} sessions to disk.`);
   } catch (err) {
-    console.error('❌ Failed to save sessions to disk:', err);
+    console.error('❌ DISK SAVE ERROR:', err);
   }
 };
 
@@ -69,15 +79,24 @@ app.get('/api/sessions/:id', (req, res) => {
 app.put('/api/sessions/:id', (req, res) => {
   const id = req.params.id.toLowerCase();
   const existing = sessions[id];
+  console.log(`📝 PUT /api/sessions/${id} (Update)`);
+  
   if (!existing) {
-    console.warn(`⚠️ Attempted update on missing session: ${id}`);
+    console.warn(`⚠️  UPDATE FAILED: Session ${id} not found`);
     return res.status(404).json({ error: 'Session not found' });
   }
   const updated = req.body;
   sessions[id] = updated;
   saveToDisk();
-  console.log(`📝 Session Updated: ${id} (Status: ${updated.status})`);
   res.json(updated);
+});
+
+// Clear all sessions (for debugging)
+app.delete('/api/sessions', (req, res) => {
+  sessions = {};
+  saveToDisk();
+  console.log('🧹 ALL SESSIONS CLEARED');
+  res.json({ message: 'Success' });
 });
 
 const server = app.listen(PORT, '0.0.0.0', () => {

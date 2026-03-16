@@ -4,10 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"node server/index.cjs\" \"vite\"",
+    "dev": "concurrently --raw \"node server/index.cjs\" \"vite\"",
     "dev:client": "vite",
     "dev:server": "node server/index.cjs",
     "build": "tsc -b && vite build",
+    "clean": "rm -rf dist .vite .turbo",
+    "contests:clear": "rm server/sessions.json",
     "lint": "eslint .",
     "preview": "vite preview"
   },
