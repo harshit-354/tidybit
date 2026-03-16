@@ -1,4 +1,4 @@
-import { ContestQuestion } from '../types/contest';
+import type { ContestQuestion } from '../types/contest';
 
 export const javascriptQuestions: ContestQuestion[] = [
   // --- EASY QUESTIONS ---

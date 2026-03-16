@@ -1,4 +1,4 @@
-import { Participant, RankedParticipant } from '../types/contest';
+import type { Participant, RankedParticipant } from '../types/contest';
 
 /**
  * Calculates the leaderboard ranking for a given list of participants.
