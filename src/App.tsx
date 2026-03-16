@@ -34,17 +34,17 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     const inviteCode = params.get('contest_invite');
     if (inviteCode) {
-      const session = getSession(inviteCode);
-      if (session) {
-        setActiveSession(session);
-        // If they already joined (simulated), they'd skip this, but for now always go to join
-        if (session.status === 'In Progress' || session.status === 'Completed') {
-          alert('This contest has already started or ended.');
-          window.history.pushState({}, '', window.location.pathname);
-        } else {
-          setView('contest_join');
+      getSession(inviteCode).then((session) => {
+        if (session) {
+          setActiveSession(session);
+          if (session.status === 'In Progress' || session.status === 'Completed') {
+            alert('This contest has already started or ended.');
+            window.history.pushState({}, '', window.location.pathname);
+          } else {
+            setView('contest_join');
+          }
         }
-      }
+      });
     }
   }, []);
 
@@ -88,15 +88,14 @@ function App() {
     setView('contest_create');
   };
 
-  const handleGenerateContest = (title: string, numQuestions: number, durationMinutes: number) => {
-    const session = createSession(user?.email || 'guest', title, numQuestions, durationMinutes);
+  const handleGenerateContest = async (title: string, numQuestions: number, durationMinutes: number) => {
+    const session = await createSession(user?.email || 'guest', title, numQuestions, durationMinutes);
     setActiveSession(session);
     setView('contest_join');
-    // Update URL so it can be shared easily
     window.history.pushState({}, '', `?contest_invite=${session.id}`);
   };
 
-  const handleJoinContest = (alias: string) => {
+  const handleJoinContest = async (alias: string) => {
     if (!activeSession) return;
     const pId = Math.random().toString(36).substring(2, 9);
     const newParticipant = {
@@ -104,27 +103,27 @@ function App() {
     };
     const updatedSession = { ...activeSession, participants: { ...activeSession.participants, [pId]: newParticipant } };
     
-    saveSession(updatedSession);
+    await saveSession(updatedSession);
     setActiveSession(updatedSession);
     setParticipantId(pId);
     setView('contest_lobby');
   };
 
-  const handleStartContest = (sessionToStart: TestSession) => {
+  const handleStartContest = async (sessionToStart: TestSession) => {
     const updatedSession = { 
       ...sessionToStart, 
       status: 'In Progress' as const, 
       startedAt: sessionToStart.startedAt || Date.now() 
     };
-    saveSession(updatedSession);
+    await saveSession(updatedSession);
     setActiveSession(updatedSession);
     setView('contest_active');
   };
 
-  const handleContestProgress = (participant: Participant) => {
+  const handleContestProgress = async (participant: Participant) => {
     if (!activeSession) return;
     const updatedSession = { ...activeSession, participants: { ...activeSession.participants, [participant.id]: participant } };
-    saveSession(updatedSession);
+    await saveSession(updatedSession);
     setActiveSession(updatedSession);
   };
 

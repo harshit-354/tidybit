@@ -22,8 +22,8 @@ const ContestLobbyPage: React.FC<ContestLobbyPageProps> = ({
   // Poll for new participants joining the session
   useEffect(() => {
     let active = true;
-    const pollInterval = setInterval(() => {
-      const freshSession = getSession(session.id);
+    const pollInterval = setInterval(async () => {
+      const freshSession = await getSession(session.id);
       if (freshSession && active) {
         setSession(freshSession);
         
