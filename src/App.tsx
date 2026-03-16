@@ -11,11 +11,12 @@ import ContestActivePage from './pages/ContestActivePage';
 import ContestLeaderboardPage from './pages/ContestLeaderboardPage';
 import ContestCreatePage from './pages/ContestCreatePage';
 import ContestLobbyPage from './pages/ContestLobbyPage';
+import ContestEnterCodePage from './pages/ContestEnterCodePage';
 import { getSession, saveSession, createSession } from './utils/sessionStorage';
 import type { TestSession, Participant } from './types/contest';
 import './App.css';
 
-type AppState = 'landing' | 'questions' | 'problem' | 'login' | 'contest_create' | 'contest_join' | 'contest_lobby' | 'contest_active' | 'contest_leaderboard';
+type AppState = 'landing' | 'questions' | 'problem' | 'login' | 'contest_create' | 'contest_enter_code' | 'contest_join' | 'contest_lobby' | 'contest_active' | 'contest_leaderboard';
 
 function App() {
   const [view, setView] = useState<AppState>('landing');
@@ -88,6 +89,16 @@ function App() {
     setView('contest_create');
   };
 
+  const handleInitiateJoinContest = () => {
+    setView('contest_enter_code');
+  };
+
+  const handleSessionFoundFromCode = (session: TestSession) => {
+    setActiveSession(session);
+    setView('contest_join');
+    window.history.pushState({}, '', `?contest_invite=${session.id}`);
+  };
+
   const handleGenerateContest = async (title: string, numQuestions: number, durationMinutes: number) => {
     const session = await createSession(user?.email || 'guest', title, numQuestions, durationMinutes);
     setActiveSession(session);
@@ -151,6 +162,7 @@ function App() {
           currentView={view === 'questions' ? 'questions' : 'landing'}
           user={user}
           onCreateContest={handleInitiateCreateContest}
+          onJoinContest={handleInitiateJoinContest}
         />
       )}
 
@@ -192,6 +204,13 @@ function App() {
         {view === 'contest_create' && (
           <ContestCreatePage
             onCreate={handleGenerateContest}
+            onCancel={handleExitContest}
+          />
+        )}
+
+        {view === 'contest_enter_code' && (
+          <ContestEnterCodePage
+            onSessionFound={handleSessionFoundFromCode}
             onCancel={handleExitContest}
           />
         )}
