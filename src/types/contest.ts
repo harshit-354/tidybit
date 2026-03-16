@@ -1,4 +1,4 @@
-import { Question, TestCase } from '../data/types';
+import type { TestCase } from '../data/types';
 
 export type ContestStatus = 'Not Started' | 'In Progress' | 'Completed';
 

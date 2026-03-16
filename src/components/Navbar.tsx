@@ -9,9 +9,10 @@ interface NavbarProps {
     onLogout: () => void;
     currentView?: 'questions' | 'landing' | 'problem';
     user: User | null;
+    onCreateContest?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onNavigate, onLogin, onLogout, currentView, user }) => {
+const Navbar: React.FC<NavbarProps> = ({ onNavigate, onLogin, onLogout, currentView, user, onCreateContest }) => {
     return (
         <nav className="navbar">
             <div className="navbar-container">
@@ -27,7 +28,18 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, onLogin, onLogout, currentV
                     >
                         Questions
                     </button>
-                    <button className="nav-link" onClick={() => alert('Contest module coming soon!')}>Contest</button>
+                    <button 
+                        className="nav-link" 
+                        onClick={() => {
+                            if (onCreateContest) {
+                                onCreateContest();
+                            } else {
+                                alert('Contest module coming soon!');
+                            }
+                        }}
+                    >
+                        Create Contest
+                    </button>
                     <button className="nav-link" onClick={() => alert('Learning paths coming soon!')}>Learn</button>
                     <button className="nav-link" onClick={() => alert('Discussion forum coming soon!')}>Discuss</button>
                 </div>
