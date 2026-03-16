@@ -1,0 +1,159 @@
+{
+  "ywqhurn": {
+    "id": "ywqhurn",
+    "inviteCode": "ywqhurn",
+    "creatorId": "hg758882@gmail.com",
+    "title": "JavaScript Speed Run",
+    "description": "A quick 10-minute challenge with 3 questions!",
+    "questions": [
+      {
+        "id": "js-easy-4",
+        "title": "Check Palindrome",
+        "difficulty": "Easy",
+        "description": "Write a function `isPalindrome` that takes a string and returns a boolean indicating whether the string is a palindrome (reads the same forwards and backwards). Ignore spaces and casing.",
+        "constraints": [
+          "1 <= string.length <= 10^5",
+          "string consists of printable ASCII characters"
+        ],
+        "examples": [
+          {
+            "input": "\"racecar\"",
+            "output": "true"
+          },
+          {
+            "input": "\"hello\"",
+            "output": "false"
+          }
+        ],
+        "testCases": [
+          {
+            "input": "\"racecar\"",
+            "expectedOutput": "true"
+          },
+          {
+            "input": "\"hello\"",
+            "expectedOutput": "false"
+          },
+          {
+            "input": "\"A man a plan a canal Panama\"",
+            "expectedOutput": "true"
+          },
+          {
+            "input": "\"a\"",
+            "expectedOutput": "true"
+          }
+        ],
+        "solutionFunctionName": "isPalindrome",
+        "scoreValue": 10
+      },
+      {
+        "id": "js-hard-1",
+        "title": "Merge k Sorted Lists",
+        "difficulty": "Hard",
+        "description": "Write a function `mergeKLists` that takes an array of `k` linked-lists `lists`, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it. (Assuming linked lists are represented as arrays for this JS challenge).",
+        "constraints": [
+          "k == lists.length",
+          "0 <= k <= 10^4",
+          "0 <= lists[i].length <= 500",
+          "-10^4 <= lists[i][j] <= 10^4",
+          "lists[i] is sorted in ascending order."
+        ],
+        "examples": [
+          {
+            "input": "[[1,4,5],[1,3,4],[2,6]]",
+            "output": "[1,1,2,3,4,4,5,6]"
+          },
+          {
+            "input": "[]",
+            "output": "[]"
+          }
+        ],
+        "testCases": [
+          {
+            "input": "[[1,4,5],[1,3,4],[2,6]]",
+            "expectedOutput": "[1,1,2,3,4,4,5,6]"
+          },
+          {
+            "input": "[]",
+            "expectedOutput": "[]"
+          },
+          {
+            "input": "[[]]",
+            "expectedOutput": "[]"
+          }
+        ],
+        "solutionFunctionName": "mergeKLists",
+        "scoreValue": 30
+      },
+      {
+        "id": "js-hard-4",
+        "title": "Sliding Window Maximum",
+        "difficulty": "Hard",
+        "description": "Write a function `maxSlidingWindow` that takes an array of integers `nums`, there is a sliding window of size `k` which is moving from the very left of the array to the very right. You can only see the `k` numbers in the window. Each time the sliding window moves right by one position. Return the max sliding window.",
+        "constraints": [
+          "1 <= nums.length <= 10^5",
+          "-10^4 <= nums[i] <= 10^4",
+          "1 <= k <= nums.length"
+        ],
+        "examples": [
+          {
+            "input": "[1,3,-1,-3,5,3,6,7], 3",
+            "output": "[3,3,5,5,6,7]"
+          },
+          {
+            "input": "[1], 1",
+            "output": "[1]"
+          }
+        ],
+        "testCases": [
+          {
+            "input": "([1,3,-1,-3,5,3,6,7], 3)",
+            "expectedOutput": "[3,3,5,5,6,7]"
+          },
+          {
+            "input": "([1], 1)",
+            "expectedOutput": "[1]"
+          },
+          {
+            "input": "([1,-1], 1)",
+            "expectedOutput": "[1,-1]"
+          },
+          {
+            "input": "([9,11], 2)",
+            "expectedOutput": "[11]"
+          },
+          {
+            "input": "([4,-2], 2)",
+            "expectedOutput": "[4]"
+          }
+        ],
+        "solutionFunctionName": "maxSlidingWindow",
+        "scoreValue": 30
+      }
+    ],
+    "participants": {
+      "zfj2t1o": {
+        "id": "zfj2t1o",
+        "alias": "dsd",
+        "joinedAt": 1773670940800,
+        "score": 0,
+        "totalTimeTakenMs": 0,
+        "answers": {},
+        "isFinished": false
+      },
+      "tog5k4a": {
+        "id": "tog5k4a",
+        "alias": "saudfh",
+        "joinedAt": 1773671005361,
+        "score": 0,
+        "totalTimeTakenMs": 0,
+        "answers": {},
+        "isFinished": false
+      }
+    },
+    "status": "In Progress",
+    "createdAt": 1773670939036,
+    "durationMinutes": 10,
+    "startedAt": 1773671015085
+  }
+}
