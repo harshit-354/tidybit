@@ -9,11 +9,13 @@ import type { User } from './data/types';
 import ContestJoinPage from './pages/ContestJoinPage';
 import ContestActivePage from './pages/ContestActivePage';
 import ContestLeaderboardPage from './pages/ContestLeaderboardPage';
-import { getSession, saveSession, createMockSession } from './utils/sessionStorage';
+import ContestCreatePage from './pages/ContestCreatePage';
+import ContestLobbyPage from './pages/ContestLobbyPage';
+import { getSession, saveSession, createSession } from './utils/sessionStorage';
 import type { TestSession, Participant } from './types/contest';
 import './App.css';
 
-type AppState = 'landing' | 'questions' | 'problem' | 'login' | 'contest_join' | 'contest_active' | 'contest_leaderboard';
+type AppState = 'landing' | 'questions' | 'problem' | 'login' | 'contest_create' | 'contest_join' | 'contest_lobby' | 'contest_active' | 'contest_leaderboard';
 
 function App() {
   const [view, setView] = useState<AppState>('landing');
@@ -35,7 +37,13 @@ function App() {
       const session = getSession(inviteCode);
       if (session) {
         setActiveSession(session);
-        setView('contest_join');
+        // If they already joined (simulated), they'd skip this, but for now always go to join
+        if (session.status === 'In Progress' || session.status === 'Completed') {
+          alert('This contest has already started or ended.');
+          window.history.pushState({}, '', window.location.pathname);
+        } else {
+          setView('contest_join');
+        }
       }
     }
   }, []);
@@ -72,9 +80,16 @@ function App() {
   const selectedQuestion = mockQuestions.find(q => q.id === selectedQuestionId);
 
   // --- Contest Handlers ---
-  const handleCreateMockContest = () => {
-    const session = createMockSession(user?.email || 'guest');
-    // For demo purposes, immediately join the one we created
+  const handleInitiateCreateContest = () => {
+    if (!user) {
+      setView('login');
+      return;
+    }
+    setView('contest_create');
+  };
+
+  const handleGenerateContest = (title: string, numQuestions: number, durationMinutes: number) => {
+    const session = createSession(user?.email || 'guest', title, numQuestions, durationMinutes);
     setActiveSession(session);
     setView('contest_join');
     // Update URL so it can be shared easily
@@ -92,6 +107,17 @@ function App() {
     saveSession(updatedSession);
     setActiveSession(updatedSession);
     setParticipantId(pId);
+    setView('contest_lobby');
+  };
+
+  const handleStartContest = (sessionToStart: TestSession) => {
+    const updatedSession = { 
+      ...sessionToStart, 
+      status: 'In Progress' as const, 
+      startedAt: sessionToStart.startedAt || Date.now() 
+    };
+    saveSession(updatedSession);
+    setActiveSession(updatedSession);
     setView('contest_active');
   };
 
@@ -125,7 +151,7 @@ function App() {
           onLogout={handleLogout}
           currentView={view === 'questions' ? 'questions' : 'landing'}
           user={user}
-          onCreateContest={handleCreateMockContest}
+          onCreateContest={handleInitiateCreateContest}
         />
       )}
 
@@ -164,11 +190,27 @@ function App() {
           />
         )}
 
+        {view === 'contest_create' && (
+          <ContestCreatePage
+            onCreate={handleGenerateContest}
+            onCancel={handleExitContest}
+          />
+        )}
+
         {view === 'contest_join' && activeSession && (
           <ContestJoinPage 
             session={activeSession} 
             onJoin={handleJoinContest} 
             onCancel={handleExitContest} 
+          />
+        )}
+
+        {view === 'contest_lobby' && activeSession && participantId && (
+          <ContestLobbyPage
+            initialSession={activeSession}
+            currentUserId={user?.email || 'guest'}
+            onStartContest={handleStartContest}
+            onCancel={handleExitContest}
           />
         )}
 

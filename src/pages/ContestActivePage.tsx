@@ -40,16 +40,21 @@ const ContestActivePage: React.FC<ContestActivePageProps> = ({
   }, [session, participantId, currentQuestionIdx]);
 
   useEffect(() => {
-    // Timer Logic
+    // If there's no startedAt, something went wrong, but fallback to Date.now()
+    const startTime = session.startedAt || Date.now();
+    const endTime = startTime + (session.durationMinutes * 60 * 1000);
+
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          handleTimeUp();
-          return 0;
-        }
-        return prev - 1;
-      });
+      const now = Date.now();
+      const remainingMs = Math.max(0, endTime - now);
+      const remainingSecs = Math.floor(remainingMs / 1000);
+      
+      setTimeLeft(remainingSecs);
+
+      if (remainingSecs <= 0) {
+        clearInterval(timer);
+        handleTimeUp();
+      }
     }, 1000);
 
     return () => clearInterval(timer);

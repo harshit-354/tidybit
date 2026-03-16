@@ -20,24 +20,24 @@ export function getSession(id: string): TestSession | null {
 }
 
 // Helper to generate a random mock session for testing
-export function createMockSession(creatorId: string): TestSession {
+export function createSession(creatorId: string, title: string, numQuestions: number, durationMinutes: number): TestSession {
   const id = Math.random().toString(36).substring(2, 9);
   
-  // Pick 3 random questions for the test
+  // Pick random questions for the test
   const shuffled = [...javascriptQuestions].sort(() => 0.5 - Math.random());
-  const selectedQuestions = shuffled.slice(0, 3);
+  const selectedQuestions = shuffled.slice(0, Math.min(numQuestions, javascriptQuestions.length));
   
   const session: TestSession = {
     id,
     inviteCode: id, // Keep it simple for now
     creatorId,
-    title: 'JavaScript Speed Run',
-    description: 'A quick 10-minute challenge to test your JS skills!',
+    title,
+    description: `A quick ${durationMinutes}-minute challenge with ${selectedQuestions.length} questions!`,
     questions: selectedQuestions,
     participants: {},
     status: 'Not Started',
     createdAt: Date.now(),
-    durationMinutes: 10,
+    durationMinutes,
   };
   
   saveSession(session);

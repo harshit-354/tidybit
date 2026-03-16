@@ -47,6 +47,7 @@ export interface TestSession {
   participants: Record<string, Participant>;
   status: ContestStatus;
   createdAt: number; // timestamp
+  startedAt?: number; // timestamp
   scheduledStartTime?: number; // timestamp
   endTime?: number; // timestamp
   durationMinutes: number;
