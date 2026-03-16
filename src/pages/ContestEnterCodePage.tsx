@@ -14,8 +14,25 @@ const ContestEnterCodePage: React.FC<ContestEnterCodePageProps> = ({ onSessionFo
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    const trimmedCode = code.trim();
+    let trimmedCode = code.trim();
     if (!trimmedCode) return;
+
+    // If they pasted a full URL, extract the ID from the contest_invite parameter
+    if (trimmedCode.includes('contest_invite=')) {
+      try {
+        const url = new URL(trimmedCode);
+        const inviteParam = url.searchParams.get('contest_invite');
+        if (inviteParam) {
+          trimmedCode = inviteParam;
+        }
+      } catch (e) {
+        // Fallback to basic regex if URL object fails
+        const match = trimmedCode.match(/[?&]contest_invite=([^&]+)/);
+        if (match) {
+          trimmedCode = match[1];
+        }
+      }
+    }
 
     setIsLoading(true);
     try {

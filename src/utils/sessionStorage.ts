@@ -23,9 +23,13 @@ export async function saveSession(session: TestSession): Promise<void> {
 export async function getSession(id: string): Promise<TestSession | null> {
   try {
     const res = await fetch(`${API_BASE}/${id}`);
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error(`Session fetch failed: ${res.status} ${res.statusText}`);
+      return null;
+    }
     return await res.json();
-  } catch {
+  } catch (err) {
+    console.error('Session storage connection error:', err);
     return null;
   }
 }

@@ -44,7 +44,12 @@ function App() {
           } else {
             setView('contest_join');
           }
+        } else {
+          alert('Invalid or expired contest link.');
+          window.history.pushState({}, '', window.location.pathname);
         }
+      }).catch(() => {
+        alert('Could not connect to the contest server.');
       });
     }
   }, []);

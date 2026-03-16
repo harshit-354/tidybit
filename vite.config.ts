@@ -8,7 +8,7 @@ export default defineConfig({
     host: true, // Expose on local network for device sharing
     proxy: {
       '/api': {
-        target: 'http://localhost:3002',
+        target: 'http://127.0.0.1:3002',
         changeOrigin: true,
       },
     },
