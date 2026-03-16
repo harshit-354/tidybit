@@ -80,7 +80,23 @@ app.put('/api/sessions/:id', (req, res) => {
   res.json(updated);
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 TidyBit Contest API running on port ${PORT}`);
-  console.log(`👉 Access via Local: http://localhost:${PORT}`);
+  console.log(`👉 Local: http://localhost:${PORT}`);
+  console.log(`📂 Persistence: ${SESSIONS_FILE}`);
+});
+
+server.on('error', (err) => {
+  console.error('❌ Server failed to start:', err);
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Please kill the other process or use a different port.`);
+  }
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('💥 Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('☄️ Unhandled Rejection at:', promise, 'reason:', reason);
 });
