@@ -1,10 +1,23 @@
+import { createClient } from '@supabase/supabase-js';
 import type { TestSession } from '../types/contest';
 import { javascriptQuestions } from '../data/javascriptQuestions';
 
 const API_BASE = '/api/sessions';
-export const STORAGE_VERSION = '1.0.1'; // Increment this to track updates
+export const STORAGE_VERSION = '1.0.1';
+
+// Supabase Configuration
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
+
+if (supabase) {
+  console.log('☁️ Supabase Cloud Storage enabled');
+} else {
+  console.log('🏠 Local Express Storage enabled');
+}
 
 export async function checkServerHealth(): Promise<boolean> {
+  if (supabase) return true; // Cloud is always "up" if we have keys
   try {
     const res = await fetch(`/api/health?t=${Date.now()}`);
     return res.ok;
@@ -17,7 +30,18 @@ export async function checkServerHealth(): Promise<boolean> {
 export async function saveSession(session: TestSession): Promise<void> {
   const normalizedId = session.id.toLowerCase();
   
-  // Try to see if it exists first
+  if (supabase) {
+    const { error } = await supabase
+      .from('sessions')
+      .upsert({ id: normalizedId, data: session });
+    if (error) {
+      console.error('Supabase Save Error:', error);
+      throw error;
+    }
+    return;
+  }
+
+  // Fallback to Express backend if no Supabase
   let res;
   try {
     const checkRes = await fetch(`${API_BASE}/${normalizedId}`);
@@ -49,6 +73,21 @@ export async function saveSession(session: TestSession): Promise<void> {
 
 export async function getSession(id: string): Promise<TestSession | null> {
   const normalizedId = id.toLowerCase();
+
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('sessions')
+      .select('data')
+      .eq('id', normalizedId)
+      .single();
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      console.error('Supabase Fetch Error:', error);
+      throw error;
+    }
+    return data.data as TestSession;
+  }
+
   try {
     const res = await fetch(`${API_BASE}/${normalizedId}?t=${Date.now()}`);
     if (res.status === 404) return null;

@@ -201,10 +201,17 @@ function App() {
           bottom: '10px',
           right: '10px',
           fontSize: '10px',
-          color: 'rgba(255,255,255,0.2)',
-          zIndex: 9999
+          color: 'rgba(255,255,255,0.3)',
+          zIndex: 9999,
+          textAlign: 'right'
         }}>
-          TidyBit Contest v{STORAGE_VERSION}
+          <div>TidyBit Contest v{STORAGE_VERSION}</div>
+          <div style={{ 
+            color: import.meta.env.VITE_SUPABASE_URL ? '#10b981' : '#f59e0b',
+            fontWeight: 'bold'
+          }}>
+            {import.meta.env.VITE_SUPABASE_URL ? '☁️ Cloud Mode' : '🏠 Local Mode'}
+          </div>
         </div>
       )}
       {view !== 'problem' && view !== 'login' && !view.startsWith('contest_') && (
