@@ -4,9 +4,10 @@ import { javascriptQuestions } from '../data/javascriptQuestions';
 const API_BASE = '/api/sessions';
 
 export async function saveSession(session: TestSession): Promise<void> {
-  const existing = await getSession(session.id);
+  const normalizedId = session.id.toLowerCase();
+  const existing = await getSession(normalizedId);
   if (existing) {
-    await fetch(`${API_BASE}/${session.id}`, {
+    await fetch(`${API_BASE}/${normalizedId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(session),
@@ -21,8 +22,9 @@ export async function saveSession(session: TestSession): Promise<void> {
 }
 
 export async function getSession(id: string): Promise<TestSession | null> {
+  const normalizedId = id.toLowerCase();
   try {
-    const res = await fetch(`${API_BASE}/${id}`);
+    const res = await fetch(`${API_BASE}/${normalizedId}`);
     if (!res.ok) {
       console.error(`Session fetch failed: ${res.status} ${res.statusText}`);
       return null;
@@ -40,7 +42,7 @@ export async function createSession(
   numQuestions: number,
   durationMinutes: number
 ): Promise<TestSession> {
-  const id = Math.random().toString(36).substring(2, 9);
+  const id = Math.random().toString(36).substring(2, 9).toLowerCase();
 
   const shuffled = [...javascriptQuestions].sort(() => 0.5 - Math.random());
   const selectedQuestions = shuffled.slice(0, Math.min(numQuestions, javascriptQuestions.length));

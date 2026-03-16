@@ -69,6 +69,23 @@ const ContestLobbyPage: React.FC<ContestLobbyPageProps> = ({
         
         <p style={{ color: '#aaa', marginBottom: '32px' }}>{session.title}</p>
         
+        {/* Contest Code Section */}
+        <div style={{ 
+          background: 'rgba(59, 130, 246, 0.2)', 
+          border: '1px solid rgba(59, 130, 246, 0.3)',
+          borderRadius: '8px', 
+          padding: '16px', 
+          marginBottom: '20px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+            Contest Code
+          </div>
+          <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#fff', letterSpacing: '0.2em', fontFamily: 'monospace' }}>
+            {session.id.toUpperCase()}
+          </div>
+        </div>
+
         {/* Invite Link Section */}
         <div style={{ 
           background: 'rgba(0, 0, 0, 0.3)', 

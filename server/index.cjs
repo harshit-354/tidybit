@@ -3,11 +3,21 @@ const cors = require('cors');
 
 const app = express();
 const PORT = 3002;
-const SESSIONS_FILE = './server/sessions.json';
+const path = require('path');
 const fs = require('fs');
+const SESSIONS_FILE = path.join(__dirname, 'sessions.json');
 
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    sessions: Object.keys(sessions).length,
+    uptime: process.uptime()
+  });
+});
 
 // Load sessions from disk on startup
 let sessions = {};
@@ -23,8 +33,9 @@ try {
 const saveToDisk = () => {
   try {
     fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions, null, 2));
+    console.log(`💾 Sessions persistent to: ${SESSIONS_FILE}`);
   } catch (err) {
-    console.error('Failed to save sessions to disk:', err);
+    console.error('❌ Failed to save sessions to disk:', err);
   }
 };
 
@@ -35,15 +46,16 @@ app.post('/api/sessions', (req, res) => {
     console.error('❌ Failed to create session: Missing ID');
     return res.status(400).json({ error: 'Invalid session data' });
   }
-  sessions[session.id] = session;
+  const id = session.id.toLowerCase();
+  sessions[id] = session;
   saveToDisk();
-  console.log(`✅ Session Created: ${session.id} ("${session.title}")`);
+  console.log(`✅ Session Created: ${id} ("${session.title}")`);
   res.status(201).json(session);
 });
 
 // Get a session by ID
 app.get('/api/sessions/:id', (req, res) => {
-  const id = req.params.id;
+  const id = req.params.id.toLowerCase();
   const session = sessions[id];
   if (!session) {
     console.warn(`🔍 Session Lookup Failed: ${id} (Not Found)`);
@@ -55,7 +67,7 @@ app.get('/api/sessions/:id', (req, res) => {
 
 // Update a session (join, start, save progress)
 app.put('/api/sessions/:id', (req, res) => {
-  const id = req.params.id;
+  const id = req.params.id.toLowerCase();
   const existing = sessions[id];
   if (!existing) {
     console.warn(`⚠️ Attempted update on missing session: ${id}`);
