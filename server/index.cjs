@@ -7,12 +7,15 @@ const path = require('path');
 const fs = require('fs');
 const SESSIONS_FILE = path.join(__dirname, 'sessions.json');
 
+// Memory store
+let sessions = {};
+
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
 
 // Request Logger Middleware
 app.use((req, res, next) => {
-  console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`);
+  console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url} (from ${req.ip})`);
   next();
 });
 
@@ -26,7 +29,6 @@ app.get('/api/health', (req, res) => {
 });
 
 // Load sessions from disk on startup
-let sessions = {};
 try {
   if (fs.existsSync(SESSIONS_FILE)) {
     const data = fs.readFileSync(SESSIONS_FILE, 'utf8');

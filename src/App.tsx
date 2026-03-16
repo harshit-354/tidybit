@@ -28,8 +28,13 @@ function App() {
 
   // Connection check
   const verifyConnection = async () => {
-    const isHealthy = await checkServerHealth();
-    setIsServerDown(!isHealthy);
+    try {
+      const isHealthy = await checkServerHealth();
+      setIsServerDown(!isHealthy);
+    } catch (err) {
+      console.error('CRITICAL: Frontend failed to reach Backend API. Ensure "npm run dev" is running and checking console for proxy errors.', err);
+      setIsServerDown(true);
+    }
   };
 
   useEffect(() => {
