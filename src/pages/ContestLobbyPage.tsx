@@ -23,14 +23,18 @@ const ContestLobbyPage: React.FC<ContestLobbyPageProps> = ({
   useEffect(() => {
     let active = true;
     const pollInterval = setInterval(async () => {
-      const freshSession = await getSession(session.id);
-      if (freshSession && active) {
-        setSession(freshSession);
-        
-        // If someone else started the contest, we should trigger the start too
-        if (freshSession.status === 'In Progress') {
-          onStartContest(freshSession);
+      try {
+        const freshSession = await getSession(session.id);
+        if (freshSession && active) {
+          setSession(freshSession);
+          
+          // If someone else started the contest, we should trigger the start too
+          if (freshSession.status === 'In Progress') {
+            onStartContest(freshSession);
+          }
         }
+      } catch (err) {
+        console.error('Lobby polling error:', err);
       }
     }, 1000); // Check every second
 

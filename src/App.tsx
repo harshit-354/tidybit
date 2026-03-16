@@ -12,7 +12,7 @@ import ContestLeaderboardPage from './pages/ContestLeaderboardPage';
 import ContestCreatePage from './pages/ContestCreatePage';
 import ContestLobbyPage from './pages/ContestLobbyPage';
 import ContestEnterCodePage from './pages/ContestEnterCodePage';
-import { getSession, saveSession, createSession } from './utils/sessionStorage';
+import { getSession, saveSession, createSession, checkServerHealth } from './utils/sessionStorage';
 import type { TestSession, Participant } from './types/contest';
 import './App.css';
 
@@ -24,12 +24,22 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [activeSession, setActiveSession] = useState<TestSession | null>(null);
   const [participantId, setParticipantId] = useState<string | null>(null);
+  const [isServerDown, setIsServerDown] = useState(false);
+
+  // Connection check
+  const verifyConnection = async () => {
+    const isHealthy = await checkServerHealth();
+    setIsServerDown(!isHealthy);
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem('tidybit_current_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+
+    verifyConnection();
+    const healthInterval = setInterval(verifyConnection, 5000);
 
     // Check for invite link
     const params = new URLSearchParams(window.location.search);
@@ -48,10 +58,13 @@ function App() {
           alert('Invalid or expired contest link.');
           window.history.pushState({}, '', window.location.pathname);
         }
-      }).catch(() => {
-        alert('Could not connect to the contest server.');
+      }).catch((err) => {
+        console.error('Failed to join via link:', err);
+        alert('Could not connect to the contest server. Please ensure the backend is running.');
       });
     }
+
+    return () => clearInterval(healthInterval);
   }, []);
 
   const handleStart = () => {
@@ -105,10 +118,14 @@ function App() {
   };
 
   const handleGenerateContest = async (title: string, numQuestions: number, durationMinutes: number) => {
-    const session = await createSession(user?.email || 'guest', title, numQuestions, durationMinutes);
-    setActiveSession(session);
-    setView('contest_join');
-    window.history.pushState({}, '', `?contest_invite=${session.id}`);
+    try {
+      const session = await createSession(user?.email || 'guest', title, numQuestions, durationMinutes);
+      setActiveSession(session);
+      setView('contest_join');
+      window.history.pushState({}, '', `?contest_invite=${session.id}`);
+    } catch (err) {
+      alert('Failed to create contest. Is the backend server running?');
+    }
   };
 
   const handleJoinContest = async (alias: string) => {
@@ -119,10 +136,14 @@ function App() {
     };
     const updatedSession = { ...activeSession, participants: { ...activeSession.participants, [pId]: newParticipant } };
     
-    await saveSession(updatedSession);
-    setActiveSession(updatedSession);
-    setParticipantId(pId);
-    setView('contest_lobby');
+    try {
+      await saveSession(updatedSession);
+      setActiveSession(updatedSession);
+      setParticipantId(pId);
+      setView('contest_lobby');
+    } catch (err) {
+      alert('Failed to join contest. Connection error.');
+    }
   };
 
   const handleStartContest = async (sessionToStart: TestSession) => {
@@ -156,6 +177,19 @@ function App() {
 
   return (
     <div className="app-container">
+      {isServerDown && (
+        <div style={{
+          background: '#ef4444',
+          color: '#fff',
+          padding: '8px 16px',
+          textAlign: 'center',
+          fontSize: '0.875rem',
+          fontWeight: 'bold',
+          zIndex: 9999
+        }}>
+          ⚠️ Backend Server Offline. Contests will not work until you run "npm run dev".
+        </div>
+      )}
       {view !== 'problem' && view !== 'login' && !view.startsWith('contest_') && (
         <Navbar
           onNavigate={(v) => {

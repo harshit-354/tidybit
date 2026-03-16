@@ -3,21 +3,46 @@ import { javascriptQuestions } from '../data/javascriptQuestions';
 
 const API_BASE = '/api/sessions';
 
+export async function checkServerHealth(): Promise<boolean> {
+  try {
+    const res = await fetch('/api/health');
+    return res.ok;
+  } catch (err) {
+    console.error('Server health check failed:', err);
+    return false;
+  }
+}
+
 export async function saveSession(session: TestSession): Promise<void> {
   const normalizedId = session.id.toLowerCase();
-  const existing = await getSession(normalizedId);
-  if (existing) {
-    await fetch(`${API_BASE}/${normalizedId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(session),
-    });
-  } else {
-    await fetch(API_BASE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(session),
-    });
+  
+  // Try to see if it exists first
+  let res;
+  try {
+    const checkRes = await fetch(`${API_BASE}/${normalizedId}`);
+    if (checkRes.ok) {
+      // PUT if exists
+      res = await fetch(`${API_BASE}/${normalizedId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(session),
+      });
+    } else {
+      // POST if new
+      res = await fetch(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(session),
+      });
+    }
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || `Server returned ${res.status}`);
+    }
+  } catch (err) {
+    console.error('Failed to save session:', err);
+    throw err; // Re-throw so UI can handle
   }
 }
 
@@ -25,14 +50,14 @@ export async function getSession(id: string): Promise<TestSession | null> {
   const normalizedId = id.toLowerCase();
   try {
     const res = await fetch(`${API_BASE}/${normalizedId}`);
+    if (res.status === 404) return null;
     if (!res.ok) {
-      console.error(`Session fetch failed: ${res.status} ${res.statusText}`);
-      return null;
+      throw new Error(`Server returned ${res.status}`);
     }
     return await res.json();
   } catch (err) {
     console.error('Session storage connection error:', err);
-    return null;
+    throw err;
   }
 }
 
