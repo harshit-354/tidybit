@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
-import { Play, Send, Loader2, CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
+import { Play, Send, Loader2, CheckCircle, XCircle, Clock } from 'lucide-react';
 import type { TestSession, Participant } from '../types/contest';
 import { runCode, type RunResult } from '../utils/codeRunner';
 import '../components/ProblemInterface.css';
@@ -23,6 +23,7 @@ const ContestActivePage: React.FC<ContestActivePageProps> = ({
   const [code, setCode] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [runResult, setRunResult] = useState<RunResult | null>(null);
+  const [activeResultTab, setActiveResultTab] = useState<number>(0);
   const [timeLeft, setTimeLeft] = useState(session.durationMinutes * 60);
 
   useEffect(() => {
@@ -97,6 +98,7 @@ const ContestActivePage: React.FC<ContestActivePageProps> = ({
     try {
       const result = await runCode(code, currentQuestion.solutionFunctionName, currentQuestion.testCases, 'javascript');
       setRunResult(result);
+      setActiveResultTab(0);
     } catch (err) {
       console.error(err);
     } finally {
@@ -111,6 +113,7 @@ const ContestActivePage: React.FC<ContestActivePageProps> = ({
     try {
       const result = await runCode(code, currentQuestion.solutionFunctionName, currentQuestion.testCases, 'javascript');
       setRunResult(result);
+      setActiveResultTab(0);
       
       if (participant && result) {
         // Record the answer
@@ -162,6 +165,9 @@ const ContestActivePage: React.FC<ContestActivePageProps> = ({
   const mins = Math.floor(timeLeft / 60);
   const secs = timeLeft % 60;
   const isTimeLow = timeLeft < 60; // less than 1 min warning
+
+  const passedCount = runResult?.testCaseResults.filter((r) => r.passed).length ?? 0;
+  const totalCount = runResult?.testCaseResults.length ?? 0;
 
   return (
     <div className="problem-interface" style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -287,7 +293,7 @@ const ContestActivePage: React.FC<ContestActivePageProps> = ({
           </div>
 
           {/* Results Panel */}
-          <div className={`results-panel ${runResult ? 'visible' : ''}`} style={{ maxHeight: '30%' }}>
+          <div className={`results-panel ${runResult ? 'visible' : ''}`} style={{ maxHeight: '30%', overflowY: 'auto' }}>
               {isRunning && (
                   <div className="results-loading">
                       <Loader2 size={20} className="spin" />
@@ -305,18 +311,55 @@ const ContestActivePage: React.FC<ContestActivePageProps> = ({
                                   <><XCircle size={18} /> {runResult.error ? 'Error' : 'Wrong Answer'}</>
                               )}
                           </div>
+                          <div className="results-meta">
+                              <span className="results-count">{passedCount}/{totalCount} passed</span>
+                              <span className="results-time">
+                                  <Clock size={14} /> {runResult.totalTime}ms
+                              </span>
+                          </div>
                       </div>
-                      {!runResult.allPassed && !runResult.error && (
-                        <div style={{ padding: '8px 16px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', fontSize: '0.9rem'}}>
-                           <AlertTriangle size={14} style={{display:'inline', verticalAlign:'middle', marginRight:'4px'}}/>
-                           Some test cases failed. Try again!
-                        </div>
-                      )}
-                      {runResult.error && (
-                        <div className="testcase-error" style={{ padding: '8px 16px' }}>
-                            <strong>Runtime Error:</strong>
-                            <pre>{runResult.error}</pre>
-                        </div>
+
+                      {/* Test case tabs */}
+                      <div className="testcase-tabs">
+                          {runResult.testCaseResults.map((tc, idx) => (
+                              <button
+                                  key={idx}
+                                  className={`testcase-tab ${activeResultTab === idx ? 'active' : ''} ${tc.passed ? 'pass' : 'fail'}`}
+                                  onClick={() => setActiveResultTab(idx)}
+                              >
+                                  {tc.passed ? <CheckCircle size={12} /> : <XCircle size={12} />}
+                                  Case {idx + 1}
+                              </button>
+                          ))}
+                      </div>
+
+                      {/* Active test case detail */}
+                      {runResult.testCaseResults[activeResultTab] && (
+                          <div className="testcase-detail">
+                              {runResult.testCaseResults[activeResultTab].error ? (
+                                  <div className="testcase-error">
+                                      <strong>Runtime Error:</strong>
+                                      <pre>{runResult.testCaseResults[activeResultTab].error}</pre>
+                                  </div>
+                              ) : (
+                                  <>
+                                      <div className="testcase-row">
+                                          <span className="testcase-label">Input:</span>
+                                          <code className="testcase-value">{runResult.testCaseResults[activeResultTab].input}</code>
+                                      </div>
+                                      <div className="testcase-row">
+                                          <span className="testcase-label">Expected:</span>
+                                          <code className="testcase-value">{runResult.testCaseResults[activeResultTab].expectedOutput}</code>
+                                      </div>
+                                      <div className="testcase-row">
+                                          <span className="testcase-label">Output:</span>
+                                          <code className={`testcase-value ${runResult.testCaseResults[activeResultTab].passed ? 'correct' : 'wrong'}`}>
+                                              {runResult.testCaseResults[activeResultTab].actualOutput || '(empty)'}
+                                          </code>
+                                      </div>
+                                  </>
+                              )}
+                          </div>
                       )}
                   </>
               )}
