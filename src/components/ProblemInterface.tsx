@@ -14,15 +14,15 @@ const STARTER_CODE: Record<string, (fnName: string) => string> = {
     typescript: (fnName) => `// Write your TypeScript solution here\nfunction ${fnName}() {\n  \n}`,
     javascript: (fnName) => `// Write your JavaScript solution here\nfunction ${fnName}() {\n  \n}`,
     python: (fnName) => `# Write your Python solution here\ndef ${fnName}():\n    pass`,
-    cpp: (fnName) => `// Write your C++ solution here\n#include <iostream>\n\nvoid ${fnName}() {\n    \n}`,
-    java: (fnName) => `// Write your Java solution here\nclass Solution {\n    public void ${fnName}() {\n        \n    }\n}`,
+    cpp: (fnName) => `// Write your C++ solution here\nclass Solution {\npublic:\n    // Replace void with the expected return type\n    void ${fnName}() {\n        \n    }\n};`,
+    java: (fnName) => `// Write your Java solution here\nclass Solution {\n    // Replace void with the expected return type\n    public void ${fnName}() {\n        \n    }\n}`,
 };
 
 const ProblemInterface: React.FC<ProblemInterfaceProps> = ({ question, onBack }) => {
     const [activeTab, setActiveTab] = useState<'description' | 'hints' | 'solutions'>('description');
     const [language, setLanguage] = useState<'typescript' | 'javascript' | 'python' | 'cpp' | 'java'>('typescript');
     const [code, setCode] = useState(
-        question.solutions[0]?.code || STARTER_CODE.typescript(question.solutionFunctionName)
+        STARTER_CODE.typescript(question.solutionFunctionName)
     );
     const [isRunning, setIsRunning] = useState(false);
     const [runResult, setRunResult] = useState<RunResult | null>(null);

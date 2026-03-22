@@ -21,8 +21,8 @@ app.use((req, res, next) => {
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     sessions: Object.keys(sessions).length,
     uptime: process.uptime()
   });
@@ -82,7 +82,7 @@ app.put('/api/sessions/:id', (req, res) => {
   const id = req.params.id.toLowerCase();
   const existing = sessions[id];
   console.log(`📝 PUT /api/sessions/${id} (Update)`);
-  
+
   if (!existing) {
     console.warn(`⚠️  UPDATE FAILED: Session ${id} not found`);
     return res.status(404).json({ error: 'Session not found' });

@@ -38,8 +38,58 @@ function stripTypeAnnotations(code: string): string {
 }
 
 /**
+ * Parses a JSON argument into a C++ literal string.
+ */
+function toCppLiteral(arg: any, isListNode: boolean): string {
+    if (typeof arg === 'string') return `string("${arg}")`;
+    if (typeof arg === 'number') return `${arg}`;
+    if (typeof arg === 'boolean') return arg ? 'true' : 'false';
+    if (Array.isArray(arg)) {
+        if (arg.length === 0) return `vector<int>{}`;
+        if (isListNode && typeof arg[0] === 'number') {
+            return `toList(vector<int>{${arg.join(',')}})`;
+        }
+        if (Array.isArray(arg[0])) {
+            const inners = arg.map(a => toCppLiteral(a, false));
+            return `vector<vector<int>>{${inners.join(',')}}`;
+        } else if (typeof arg[0] === 'string') {
+            const inners = arg.map(a => toCppLiteral(a, false));
+            return `vector<string>{${inners.join(',')}}`;
+        } else {
+            return `vector<int>{${arg.join(',')}}`;
+        }
+    }
+    return '';
+}
+
+/**
+ * Parses a JSON argument into a Java literal string.
+ */
+function toJavaLiteral(arg: any, isListNode: boolean): string {
+    if (typeof arg === 'string') return `"${arg}"`;
+    if (typeof arg === 'number') return `${arg}`;
+    if (typeof arg === 'boolean') return arg ? "true" : "false";
+    if (Array.isArray(arg)) {
+        if (arg.length === 0) return `new int[]{}`;
+        if (isListNode && typeof arg[0] === 'number') {
+            return `toList(new int[]{${arg.join(',')}})`;
+        }
+        if (Array.isArray(arg[0])) {
+            const inners = arg.map(a => toJavaLiteral(a, false));
+            return `new int[][]{${inners.join(',')}}`;
+        } else if (typeof arg[0] === 'string') {
+            const inners = arg.map(a => toJavaLiteral(a, false));
+            return `new String[]{${inners.join(',')}}`;
+        } else {
+            return `new int[]{${arg.join(',')}}`;
+        }
+    }
+    return '';
+}
+
+/**
  * Executes user code against test cases for a given question.
- * Supports JavaScript/TypeScript and Python (via Pyodide).
+ * Supports JavaScript/TypeScript, Python, C++, and Java.
  */
 export async function runCode(
     code: string,
@@ -111,20 +161,195 @@ json.dumps(result)
         }
     }
 
-    // For other non-JS languages
-    if (language !== 'typescript' && language !== 'javascript') {
-        return {
-            testCaseResults: testCases.map((tc) => ({
-                input: tc.input,
-                expectedOutput: tc.expectedOutput,
-                actualOutput: '—',
-                passed: false,
-                error: `Client-side execution is only supported for JS/TS and Python.`,
-            })),
-            allPassed: false,
-            totalTime: 0,
-            error: `Language "${language}" is not supported for client-side execution.`,
-        };
+    // Handle Remote Execution for C++ and Java
+    if (language === 'cpp' || language === 'java') {
+        const isListNode = code.includes('ListNode');
+        
+        for (const tc of testCases) {
+            try {
+                const args: any[] = JSON.parse(tc.input);
+                let fullCode = '';
+
+                if (language === 'cpp') {
+                    const cppArgs = args.map(a => toCppLiteral(a, isListNode)).join(', ');
+                    fullCode = `
+#include <iostream>
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <algorithm>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+ListNode* toList(const vector<int>& v) {
+    ListNode dummy;
+    ListNode* curr = &dummy;
+    for(int n : v) { curr->next = new ListNode(n); curr = curr->next; }
+    return dummy.next;
+}
+
+template <typename T>
+void print(const vector<T>& v) {
+    cout << "[";
+    for(size_t i=0; i<v.size(); ++i) {
+        print(v[i]);
+        if(i != v.size()-1) cout << ",";
+    }
+    cout << "]";
+}
+void print(int v) { cout << v; }
+void print(string v) { cout << "\\"" << v << "\\""; }
+void print(bool v) { cout << (v ? "true" : "false"); }
+void print(ListNode* node) {
+    cout << "[";
+    while(node) {
+        cout << node->val;
+        if(node->next) cout << ",";
+        node = node->next;
+    }
+    cout << "]";
+}
+
+${code}
+
+int main() {
+    Solution sol;
+    auto res = sol.${functionName}(${cppArgs});
+    print(res);
+    return 0;
+}
+`;
+                } else if (language === 'java') {
+                    const javaArgs = args.map(a => toJavaLiteral(a, isListNode)).join(', ');
+                    fullCode = `
+import java.util.*;
+
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+${code}
+
+public class Main {
+    static ListNode toList(int[] arr) {
+        ListNode dummy = new ListNode(0);
+        ListNode curr = dummy;
+        for (int n : arr) { curr.next = new ListNode(n); curr = curr.next; }
+        return dummy.next;
+    }
+
+    static void print(int[] arr) {
+        System.out.print("[");
+        for (int i=0; i<arr.length; i++) {
+            System.out.print(arr[i]);
+            if (i < arr.length-1) System.out.print(",");
+        }
+        System.out.print("]");
+    }
+    
+    static void print(int[][] arr) {
+        System.out.print("[");
+        for (int i=0; i<arr.length; i++) {
+            print(arr[i]);
+            if (i < arr.length-1) System.out.print(",");
+        }
+        System.out.print("]");
+    }
+    
+    static void print(int n) { System.out.print(n); }
+    static void print(String s) { System.out.print("\\"" + s + "\\""); }
+    static void print(boolean b) { System.out.print(b); }
+    static void print(ListNode node) {
+        System.out.print("[");
+        while(node != null) {
+            System.out.print(node.val);
+            if(node.next != null) System.out.print(",");
+            node = node.next;
+        }
+        System.out.print("]");
+    }
+
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        print(sol.${functionName}(${javaArgs}));
+    }
+}
+`;
+                }
+
+                // Call Piston API
+                const response = await fetch('https://emkc.org/api/v2/piston/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        language: language,
+                        version: language === 'cpp' ? '10.2.0' : '15.0.2',
+                        files: [{ name: language === 'cpp' ? 'main.cpp' : 'Main.java', content: fullCode }],
+                        compile_timeout: 10000,
+                        run_timeout: 3000
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.message) {
+                    throw new Error(`Execution API Error: ${data.message}`);
+                }
+                
+                if (!data.run) {
+                    throw new Error(`Failed to execute: ${JSON.stringify(data)}`);
+                }
+
+                if (data.compile && data.compile.code !== 0) {
+                    throw new Error(`Compilation Error: ${data.compile.output}`);
+                }
+                
+                if (data.run.code !== 0) {
+                    throw new Error(`Runtime Error: ${data.run.output}`);
+                }
+
+                const actualOutput = (data.run.output || '').trim();
+
+                const normalizedExpected = JSON.stringify(JSON.parse(tc.expectedOutput));
+                let passed = false;
+                try {
+                    const normalizedActual = JSON.stringify(JSON.parse(actualOutput));
+                    passed = normalizedExpected === normalizedActual;
+                } catch {
+                    passed = tc.expectedOutput.trim() === actualOutput;
+                }
+
+                results.push({
+                    input: tc.input,
+                    expectedOutput: tc.expectedOutput,
+                    actualOutput,
+                    passed: passed,
+                });
+
+            } catch (err: unknown) {
+                results.push({
+                    input: tc.input,
+                    expectedOutput: tc.expectedOutput,
+                    actualOutput: '',
+                    passed: false,
+                    error: err instanceof Error ? err.message : String(err),
+                });
+            }
+        }
+
+        const totalTime = Math.round(performance.now() - startTime);
+        return { testCaseResults: results, allPassed: results.every(r => r.passed), totalTime };
     }
 
     // Handle JS/TS execution
