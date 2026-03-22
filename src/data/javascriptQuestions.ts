@@ -16,10 +16,10 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "[-1, 1, 0]", output: "0" }
     ],
     testCases: [
-      { input: "[1, 2, 3]", expectedOutput: "6" },
-      { input: "[-1, 1, 0]", expectedOutput: "0" },
-      { input: "[]", expectedOutput: "0" },
-      { input: "[10, 20, 30, 40]", expectedOutput: "100" }
+      { input: "[[1, 2, 3]]", expectedOutput: "6" },
+      { input: "[[-1, 1, 0]]", expectedOutput: "0" },
+      { input: "[[]]", expectedOutput: "0" },
+      { input: "[[10, 20, 30, 40]]", expectedOutput: "100" }
     ],
     solutionFunctionName: "sumArray",
     scoreValue: 10
@@ -38,10 +38,10 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "\"world\"", output: "\"dlrow\"" }
     ],
     testCases: [
-      { input: "\"hello\"", expectedOutput: "\"olleh\"" },
-      { input: "\"world\"", expectedOutput: "\"dlrow\"" },
-      { input: "\"a\"", expectedOutput: "\"a\"" },
-      { input: "\"ab\"", expectedOutput: "\"ba\"" }
+      { input: "[\"hello\"]", expectedOutput: "\"olleh\"" },
+      { input: "[\"world\"]", expectedOutput: "\"dlrow\"" },
+      { input: "[\"a\"]", expectedOutput: "\"a\"" },
+      { input: "[\"ab\"]", expectedOutput: "\"ba\"" }
     ],
     solutionFunctionName: "reverseString",
     scoreValue: 10
@@ -60,10 +60,10 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "[-5, -1, -3]", output: "-1" }
     ],
     testCases: [
-      { input: "[1, 5, 3, 9, 2]", expectedOutput: "9" },
-      { input: "[-5, -1, -3]", expectedOutput: "-1" },
-      { input: "[]", expectedOutput: "null" },
-      { input: "[10]", expectedOutput: "10" }
+      { input: "[[1, 5, 3, 9, 2]]", expectedOutput: "9" },
+      { input: "[[-5, -1, -3]]", expectedOutput: "-1" },
+      { input: "[[]]", expectedOutput: "null" },
+      { input: "[[10]]", expectedOutput: "10" }
     ],
     solutionFunctionName: "findMax",
     scoreValue: 10
@@ -82,10 +82,10 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "\"hello\"", output: "false" }
     ],
     testCases: [
-      { input: "\"racecar\"", expectedOutput: "true" },
-      { input: "\"hello\"", expectedOutput: "false" },
-      { input: "\"A man a plan a canal Panama\"", expectedOutput: "true" },
-      { input: "\"a\"", expectedOutput: "true" }
+      { input: "[\"racecar\"]", expectedOutput: "true" },
+      { input: "[\"hello\"]", expectedOutput: "false" },
+      { input: "[\"A man a plan a canal Panama\"]", expectedOutput: "true" },
+      { input: "[\"a\"]", expectedOutput: "true" }
     ],
     solutionFunctionName: "isPalindrome",
     scoreValue: 10
@@ -108,9 +108,9 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "[3, 2, 4], 6", output: "[1, 2]" }
     ],
     testCases: [
-      { input: "([2, 7, 11, 15], 9)", expectedOutput: "[0, 1]" },
-      { input: "([3, 2, 4], 6)", expectedOutput: "[1, 2]" },
-      { input: "([3, 3], 6)", expectedOutput: "[0, 1]" }
+      { input: "[[2, 7, 11, 15], 9]", expectedOutput: "[0, 1]" },
+      { input: "[[3, 2, 4], 6]", expectedOutput: "[1, 2]" },
+      { input: "[[3, 3], 6]", expectedOutput: "[0, 1]" }
     ],
     solutionFunctionName: "twoSum",
     scoreValue: 20
@@ -129,10 +129,10 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "\"bbbbb\"", output: "1", explanation: "The answer is \"b\", with the length of 1." }
     ],
     testCases: [
-      { input: "\"abcabcbb\"", expectedOutput: "3" },
-      { input: "\"bbbbb\"", expectedOutput: "1" },
-      { input: "\"pwwkew\"", expectedOutput: "3" },
-      { input: "\"\"", expectedOutput: "0" }
+      { input: "[\"abcabcbb\"]", expectedOutput: "3" },
+      { input: "[\"bbbbb\"]", expectedOutput: "1" },
+      { input: "[\"pwwkew\"]", expectedOutput: "3" },
+      { input: "[\"\"]", expectedOutput: "0" }
     ],
     solutionFunctionName: "lengthOfLongestSubstring",
     scoreValue: 20
@@ -152,9 +152,9 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "[\"\"]", output: "[[\"\"]]" }
     ],
     testCases: [
-      { input: "[\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]", expectedOutput: "[[\"eat\",\"tea\",\"ate\"],[\"tan\",\"nat\"],[\"bat\"]]" }, // Note test order might be tricky to match exactly
-      { input: "[\"\"]", expectedOutput: "[[\"\"]]" },
-      { input: "[\"a\"]", expectedOutput: "[[\"a\"]]" }
+      { input: "[[\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]]", expectedOutput: "[[\"eat\",\"tea\",\"ate\"],[\"tan\",\"nat\"],[\"bat\"]]" }, // Note test order might be tricky to match exactly
+      { input: "[[\"\"]]", expectedOutput: "[[\"\"]]" },
+      { input: "[[\"a\"]]", expectedOutput: "[[\"a\"]]" }
     ],
     solutionFunctionName: "groupAnagrams",
     scoreValue: 20
@@ -174,10 +174,10 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "[1,1]", output: "1" }
     ],
     testCases: [
-      { input: "[1,8,6,2,5,4,8,3,7]", expectedOutput: "49" },
-      { input: "[1,1]", expectedOutput: "1" },
-      { input: "[4,3,2,1,4]", expectedOutput: "16" },
-      { input: "[1,2,1]", expectedOutput: "2" }
+      { input: "[[1,8,6,2,5,4,8,3,7]]", expectedOutput: "49" },
+      { input: "[[1,1]]", expectedOutput: "1" },
+      { input: "[[4,3,2,1,4]]", expectedOutput: "16" },
+      { input: "[[1,2,1]]", expectedOutput: "2" }
     ],
     solutionFunctionName: "maxArea",
     scoreValue: 20
@@ -201,9 +201,9 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "[]", output: "[]" }
     ],
     testCases: [
-      { input: "[[1,4,5],[1,3,4],[2,6]]", expectedOutput: "[1,1,2,3,4,4,5,6]" },
-      { input: "[]", expectedOutput: "[]" },
-      { input: "[[]]", expectedOutput: "[]" }
+      { input: "[[[1,4,5],[1,3,4],[2,6]]]", expectedOutput: "[1,1,2,3,4,4,5,6]" },
+      { input: "[[]]", expectedOutput: "[]" },
+      { input: "[[[]]]", expectedOutput: "[]" }
     ],
     solutionFunctionName: "mergeKLists",
     scoreValue: 30
@@ -223,10 +223,10 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "[4,2,0,3,2,5]", output: "9" }
     ],
     testCases: [
-      { input: "[0,1,0,2,1,0,1,3,2,1,2,1]", expectedOutput: "6" },
-      { input: "[4,2,0,3,2,5]", expectedOutput: "9" },
-      { input: "[1,0,1]", expectedOutput: "1" },
-      { input: "[5,4,1,2]", expectedOutput: "1" }
+      { input: "[[0,1,0,2,1,0,1,3,2,1,2,1]]", expectedOutput: "6" },
+      { input: "[[4,2,0,3,2,5]]", expectedOutput: "9" },
+      { input: "[[1,0,1]]", expectedOutput: "1" },
+      { input: "[[5,4,1,2]]", expectedOutput: "1" }
     ],
     solutionFunctionName: "trap",
     scoreValue: 30
@@ -249,11 +249,11 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "\"ab\", \".*\"", output: "true" }
     ],
     testCases: [
-      { input: "(\"aa\", \"a\")", expectedOutput: "false" },
-      { input: "(\"aa\", \"a*\")", expectedOutput: "true" },
-      { input: "(\"ab\", \".*\")", expectedOutput: "true" },
-      { input: "(\"aab\", \"c*a*b\")", expectedOutput: "true" },
-      { input: "(\"mississippi\", \"mis*is*p*.\")", expectedOutput: "false" }
+      { input: "[\"aa\", \"a\"]", expectedOutput: "false" },
+      { input: "[\"aa\", \"a*\"]", expectedOutput: "true" },
+      { input: "[\"ab\", \".*\"]", expectedOutput: "true" },
+      { input: "[\"aab\", \"c*a*b\"]", expectedOutput: "true" },
+      { input: "[\"mississippi\", \"mis*is*p*.\"]", expectedOutput: "false" }
     ],
     solutionFunctionName: "isMatch",
     scoreValue: 30
@@ -273,11 +273,11 @@ export const javascriptQuestions: ContestQuestion[] = [
       { input: "[1], 1", output: "[1]" }
     ],
     testCases: [
-      { input: "([1,3,-1,-3,5,3,6,7], 3)", expectedOutput: "[3,3,5,5,6,7]" },
-      { input: "([1], 1)", expectedOutput: "[1]" },
-      { input: "([1,-1], 1)", expectedOutput: "[1,-1]" },
-      { input: "([9,11], 2)", expectedOutput: "[11]" },
-      { input: "([4,-2], 2)", expectedOutput: "[4]" }
+      { input: "[[1,3,-1,-3,5,3,6,7], 3]", expectedOutput: "[3,3,5,5,6,7]" },
+      { input: "[[1], 1]", expectedOutput: "[1]" },
+      { input: "[[1,-1], 1]", expectedOutput: "[1,-1]" },
+      { input: "[[9,11], 2]", expectedOutput: "[11]" },
+      { input: "[[4,-2], 2]", expectedOutput: "[4]" }
     ],
     solutionFunctionName: "maxSlidingWindow",
     scoreValue: 30
