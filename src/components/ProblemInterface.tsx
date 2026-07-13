@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import Editor from '@monaco-editor/react';
-import { ChevronLeft, Play, Send, Lightbulb, FileText, CheckCircle, Loader2, XCircle, Clock } from 'lucide-react';
+import { ChevronLeft, Play, Send, Lightbulb, FileText, CheckCircle, Loader2, XCircle, Clock, Sparkles } from 'lucide-react';
 import type { Question } from '../data/types';
 import { runCode, type RunResult } from '../utils/codeRunner';
+import { useAiChat } from '../hooks/useAiChat';
+import AiChatPanel from './AiChatPanel';
 import './ProblemInterface.css';
 
 interface ProblemInterfaceProps {
@@ -28,6 +30,17 @@ const ProblemInterface: React.FC<ProblemInterfaceProps> = ({ question, onBack })
     const [runResult, setRunResult] = useState<RunResult | null>(null);
     const [activeResultTab, setActiveResultTab] = useState<number>(0);
     const [submitted, setSubmitted] = useState(false);
+    const [isAiChatOpen, setIsAiChatOpen] = useState(false);
+
+    // AI Chat hook — manages conversation state, API calls, loading/error
+    const {
+        messages: aiMessages,
+        isLoading: aiLoading,
+        error: aiError,
+        sendMessage: aiSendMessage,
+        clearHistory: aiClearHistory,
+        retryAfterSeconds: aiRetryAfter,
+    } = useAiChat({ question, userCode: code, language });
 
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newLang = e.target.value as keyof typeof STARTER_CODE;
@@ -293,6 +306,29 @@ const ProblemInterface: React.FC<ProblemInterfaceProps> = ({ question, onBack })
                     </div>
                 </div>
             </div>
+
+            {/* AI Chat — Floating trigger button */}
+            <button
+                className="ask-ai-btn"
+                onClick={() => setIsAiChatOpen(true)}
+                title="Get AI-powered hints"
+            >
+                <Sparkles size={18} />
+                <span>Ask AI</span>
+            </button>
+
+            {/* AI Chat — Slide-in panel */}
+            <AiChatPanel
+                isOpen={isAiChatOpen}
+                onClose={() => setIsAiChatOpen(false)}
+                messages={aiMessages}
+                isLoading={aiLoading}
+                error={aiError}
+                retryAfterSeconds={aiRetryAfter}
+                onSendMessage={aiSendMessage}
+                onClearHistory={aiClearHistory}
+                problemTitle={question.title}
+            />
         </div>
     );
 };

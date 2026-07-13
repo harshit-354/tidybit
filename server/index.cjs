@@ -1,10 +1,37 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+
+// Load environment variables from .env file (for GEMINI_API_KEY)
+// Using manual parsing to avoid adding dotenv as a dependency
+const envPath = path.join(__dirname, '..', '.env');
+try {
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    for (const line of envContent.split('\n')) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const eqIndex = trimmed.indexOf('=');
+        if (eqIndex > 0) {
+          const key = trimmed.substring(0, eqIndex).trim();
+          const value = trimmed.substring(eqIndex + 1).trim();
+          if (!process.env[key]) {
+            process.env[key] = value;
+          }
+        }
+      }
+    }
+    console.log('📂 Loaded environment variables from .env');
+  }
+} catch (err) {
+  console.warn('⚠️  Could not load .env file:', err.message);
+}
+
+const aiRoutes = require('./routes/aiRoutes.cjs');
 
 const app = express();
 const PORT = 3002;
-const path = require('path');
-const fs = require('fs');
 const SESSIONS_FILE = path.join(__dirname, 'sessions.json');
 
 // Memory store
@@ -18,6 +45,9 @@ app.use((req, res, next) => {
   console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url} (from ${req.ip})`);
   next();
 });
+
+// AI Hint Assistant routes
+app.use('/api', aiRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
