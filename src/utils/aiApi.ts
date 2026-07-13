@@ -48,7 +48,16 @@ export async function fetchAiHint(request: AiHintRequest): Promise<AiHintRespons
     body: JSON.stringify(request),
   });
 
-  const data = await response.json();
+  const text = await response.text();
+  let data: any;
+  try {
+    data = JSON.parse(text);
+  } catch (err) {
+    if (!response.ok) {
+      throw new Error(`Server returned HTTP ${response.status}: ${text.slice(0, 100)}`);
+    }
+    throw new Error('Received an invalid response format from the server.');
+  }
 
   if (!response.ok) {
     const errorData = data as AiErrorResponse;
