@@ -18,7 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, onLogin, onLogout, currentV
         <nav className="navbar">
             <div className="navbar-container">
                 <div className="navbar-logo" onClick={() => onNavigate('landing')} style={{ cursor: 'pointer' }}>
-                    <div className="logo-icon">T</div>
+                    <div className="logo-icon">B</div>
                     <span className="logo-text">BitForge</span>
                 </div>
 
