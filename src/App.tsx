@@ -211,7 +211,7 @@ function App() {
           zIndex: 9999,
           textAlign: 'right'
         }}>
-          <div>TidyBit Contest v{STORAGE_VERSION}</div>
+          <div>BitForge Contest v{STORAGE_VERSION}</div>
           <div style={{ 
             color: import.meta.env.VITE_SUPABASE_URL ? '#10b981' : '#f59e0b',
             fontWeight: 'bold'

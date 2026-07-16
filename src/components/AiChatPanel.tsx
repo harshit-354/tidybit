@@ -167,7 +167,7 @@ const AiChatPanel: React.FC<AiChatPanelProps> = ({
               <Sparkles size={16} />
             </div>
             <div className="ai-chat-header-info">
-              <h3>TidyBit AI</h3>
+              <h3>BitForge AI</h3>
               <span>DSA Tutor • {problemTitle}</span>
             </div>
           </div>

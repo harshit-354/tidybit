@@ -132,7 +132,7 @@ app.delete('/api/sessions', (req, res) => {
 });
 
 const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 TidyBit Contest API running on port ${PORT}`);
+  console.log(`🚀 BitForge Contest API running on port ${PORT}`);
   console.log(`👉 Local: http://localhost:${PORT}`);
   console.log(`📂 Persistence: ${SESSIONS_FILE}`);
 });

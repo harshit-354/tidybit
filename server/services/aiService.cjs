@@ -22,7 +22,7 @@ const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/
  * Each numbered rule maps to a specific user requirement.
  */
 function buildSystemPrompt(problemContext) {
-  return `You are **TidyBit AI** — a patient and encouraging DSA (Data Structures & Algorithms) tutor embedded in a coding practice platform.
+  return `You are **BitForge AI** — a patient and encouraging DSA (Data Structures & Algorithms) tutor embedded in a coding practice platform.
 
 ## Your Core Rules
 

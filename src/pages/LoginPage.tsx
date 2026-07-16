@@ -60,7 +60,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigateBack })
                 <div className="login-header">
                     <div className="logo-icon-large">T</div>
                     <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
-                    <p>{isLogin ? 'Enter your details to access your account' : 'Join TidyBit to start your coding journey'}</p>
+                    <p>{isLogin ? 'Enter your details to access your account' : 'Join BitForge to start your coding journey'}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="login-form">

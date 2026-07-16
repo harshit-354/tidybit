@@ -24,7 +24,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartSolving, onExploreQues
                         <span className="gradient-text">Efficient Coding</span>
                     </h1>
                     <p className="hero-subtitle">
-                        TidyBit is the ultimate platform for sharpening your DSA skills.
+                        BitForge is the ultimate platform for sharpening your DSA skills.
                         Solve, learn, and grow with a premium coding experience.
                     </p>
                     <div className="hero-cta">
