@@ -32,7 +32,7 @@ const aiRoutes = require('./routes/aiRoutes.cjs');
 
 const app = express();
 const PORT = 3002;
-const SESSIONS_FILE = path.join(__dirname, 'sessions.json');
+const SESSIONS_FILE = process.env.VERCEL ? '/tmp/sessions.json' : path.join(__dirname, 'sessions.json');
 
 // Memory store
 let sessions = {};
@@ -131,18 +131,22 @@ app.delete('/api/sessions', (req, res) => {
   res.json({ message: 'Success' });
 });
 
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 BitForge Contest API running on port ${PORT}`);
-  console.log(`👉 Local: http://localhost:${PORT}`);
-  console.log(`📂 Persistence: ${SESSIONS_FILE}`);
-});
+if (!process.env.VERCEL) {
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 BitForge Contest API running on port ${PORT}`);
+    console.log(`👉 Local: http://localhost:${PORT}`);
+    console.log(`📂 Persistence: ${SESSIONS_FILE}`);
+  });
 
-server.on('error', (err) => {
-  console.error('❌ Server failed to start:', err);
-  if (err.code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} is already in use. Please kill the other process or use a different port.`);
-  }
-});
+  server.on('error', (err) => {
+    console.error('❌ Server failed to start:', err);
+    if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${PORT} is already in use. Please kill the other process or use a different port.`);
+    }
+  });
+}
+
+module.exports = app;
 
 process.on('uncaughtException', (err) => {
   console.error('💥 Uncaught Exception:', err);
