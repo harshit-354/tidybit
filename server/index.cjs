@@ -3,7 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 
-// Load environment variables from .env file (for GEMINI_API_KEY)
+// Load environment variables from .env file (for GROQ_API_KEY)
 // Using manual parsing to avoid adding dotenv as a dependency
 const envPath = path.join(__dirname, '..', '.env');
 try {
